@@ -1,0 +1,146 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+{% load mathfilters %}
+
+<div id="main_product">
+
+    {% for product in products %}
+
+        <div id="product_container_{{ product.id }}"
+             class="d-flex aprod_cont  justify-content-between">
+
+            <div class="d-flex aprod_name justify-content-start ">
+                <div class="aprod_name_image mr-3 align-items-center">
+                    {% if  product.product_photo.all.count == 0 %}
+                        <img src="{{ product.image_default.url }}">
+                    {% else %}
+                        <img src="{{ product.product_photo.all.0.image.url }}">
+                    {% endif %}
+                </div>
+
+                <div class="d-flex flex-column justify-content-between">
+
+                    <div class="d-flex d-flex flex-column">
+                        <div class="align-self-start">
+                            {{ product.name }}
+                        </div>
+                        <div class="d-flex justify-content-start align-self-start">
+                            {% for size in product.size.all %}
+                                <div class="d-flex mr-2">
+                                    <div class="mr-1">
+                                        {{ size.size }} -
+                                    </div>
+
+                                    <div class="">
+                                        {{ size.count }} шт.
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-flex justify-content-start align-self-start">
+                            <div class="d-flex mr-2">
+                                <div class="mr-1">
+                                    Категория:
+                                </div>
+
+                                <div class="">
+                                    {{ product.category.title }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-start align-self-start">
+                            <div class="d-flex mr-2">
+                                <div class="mr-1">
+                                    Рейтинг:
+                                </div>
+
+                                <div class="">
+                                    {{ product.rating }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex d-flex flex-column justify-content-start align-self-start">
+                        <div class="d-flex mr-2">
+                            <div class="mr-1">
+                                Цена:
+                            </div>
+
+                            <div class="">
+                                {{ product.base_price }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex mr-2">
+                            <div class="mr-1">
+                                Скидка:
+                            </div>
+
+                            <div class="">
+                                {{ product.sale }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex mr-2">
+                            <div class="mr-1">
+                                Итого:
+                            </div>
+
+                            <div class="">
+                                {{ product.price }}
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div class="d-flex aprod_set align-items-start">
+                <div class="d-flex flex-column">
+                    <div class="d-flex">
+                        <button id="{{ product.id }}" class="mr-1 product_edit btn__custom__inverse"><i
+                                class="fal fa-cog"></i>
+                        </button>
+
+                        <button id="{{ product.id }}" data-toggle="modal" data-target="#modal_product_remove"
+                                data-id="{{ product.id }}" data-name="{{ product.name }}" class="btn__custom__inverse">
+                            <i
+                                    class="fal fa-times"></i></button>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="mr-1 txt">
+                            {{ product.count_view }}
+                        </div>
+
+                        <div>
+                           <span style="font-size: 1em; color: #ff28a3;">
+                              <i class="fal fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="mr-1 txt">
+                            {{ product.count_buy }}
+                        </div>
+
+                        <div>
+                            <span style="font-size: 1em; color: #ff28a3;">
+                              <i class="fal fa-cart-arrow-down"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    {% endfor %}
+</div>

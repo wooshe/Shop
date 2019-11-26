@@ -1,0 +1,92 @@
+{% extends 'script.html' %}
+{% load  static %}
+
+{% block title %}Bona Fide Sale - Условия возврата{% endblock title %}
+
+{% block scr %}
+
+    <script>
+
+        $(window).on('load', function () {
+
+
+        });
+
+        $(document).ready(function () {
+
+        })
+    </script>
+
+{% endblock scr %}
+
+
+
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+
+
+{% block content %}
+    <section>
+        <div class="container-fluid" style="padding-left: 50px; padding-right: 50px">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+                <div class="col-12">
+                    <div class="section__header start">Возврат товара</div>
+                    <hr>
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <p>Скачайте заявление на возврат, заполните его и отправьте на почту support@bonafidesale.ru</p>
+
+                    <br>
+
+                    <a href="/media/default/vozvrat.doc">
+                        <button class="btn__custom__inverse">
+                            Скачать заявление
+                        </button>
+                    </a>
+
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <p>Возврат возможен в течении 14 дней с момента получения заказа, если вещи не были в употреблении,
+                        сохранен товарный вид, потребительские свойства, вшитая тканевая бирка.</p>
+                    <p>Возврат денежных средств за товар ненадлежащего качества производится после подтверждения наличия
+                        производственного брака и при условии сохранения вшитой тканевой бирки. </p>
+                    <p>Для возврата денежных средств нам необходимы от Вас полные реквизиты по банковской карте с
+                        которой
+                        производилась оплата заказа:
+                    </p>
+                    <ul>
+                        <li><p>ФИО, </p></li>
+                        <li><p>номер счёта карты,</p></li>
+                        <li><p>банк получателя, </p></li>
+                        <li><p>БИК,</p></li>
+                        <li><p>корр. счет, </p></li>
+                        <li><p>ИНН, </p></li>
+                        <li><p>КПП.</p></li>
+                    </ul>
+                    <p></p>
+                    <p>Внимательно и полностью заполните заявление, обязательно с живой подписью. Можно распечатать и
+                        подписать или полностью написать от руки и выслать фото заполненного заявления эл. адрес
+                        support@bonafidesale.ru , а товар отправить почтой по адресу: ИП Крюков Александр Евгеньевич
+                        440061, г. Пенза, ул. Толстого, д. 6, кв. 36, с пометкой — «До востребования». Как только
+                        получим посылку, с вами свяжется наш
+                        менеджер. </p>
+                    <p>Товар необходимо отправить назад не позднее, чем через 3 дня с момента обращения. Заявление можно
+                        вложить в посылку. </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+

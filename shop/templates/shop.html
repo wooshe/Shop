@@ -1,0 +1,259 @@
+{% extends 'script.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+{% load mathfilters %}
+{% block scr %}
+
+{% endblock scr %}
+
+
+
+{% block content %}
+    <div class="container-fluid" style="background-color: #e6e6e6;padding-top: 0px">
+
+        <div style="background-color: rgb(226,226,226)" class="row flex-xl-nowrap border-bottom ">
+
+            <div class="text-center col-12 col-md-4 col-xl-4 py-md-3 pl-md-5">
+                <div class=" carousel slide" id="carousel-ecommerce-01" data-ride="carousel">
+                    <div class=" carousel-inner">
+                        <div class="  carousel-item active">
+                            <img class="rounded img-fluid"
+                                 style="width: 75%;height: 75%"
+                                 src="/static/google.svg" width="30" height="30"
+                                 alt="">
+                        </div>
+
+                        <div class="carousel-item ">
+                            <img class="rounded img-fluid"
+                                 style="width: 75%;height: 75%"
+                                 src="{% static 'primerka.png' %}"
+                                 alt="">
+                        </div>
+
+                    </div>
+
+                    <div><a class="carousel-control-prev justify-content-start" href="#carousel-ecommerce-01"
+                            role="button" data-slide="prev"><img src="{% static 'placeholder/icons/chevron-left.svg' %}"
+                                                                 aria-hidden="true" alt=""><span
+                            class="sr-only">Previous</span></a><a
+
+                            class="carousel-control-next justify-content-end" href="#carousel-ecommerce-01"
+                            role="button" data-slide="next"><img
+                            src="{% static 'placeholder/icons/chevron-right.svg' %}"
+                            aria-hidden="true" alt=""><span
+                            class="sr-only">Next</span></a></div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-8 col-xl-8 py-md-3 pl-md-5">
+
+                <h2 class="mt-3 mb-4">{{ shop.name }}</h2>
+                <p class="mt-3 mb-4">{{ shop.description }}</p>
+
+
+                <ul class="list-inline d-flex">
+                    <li class="d-flex">
+                        <select shop="{{ shop.id }}" id="shop_rating_{{ shop.id }}">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </li>
+
+                    <li class="d-flex">
+                        <select theme="css-stars2" state="nothink" rating="{{ shop.rating }}" shop="{{ shop.id }}"
+                                class="shop_rating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </li>
+
+                    <li class="d-flex">
+                        <h6 class="shop_rating_text"
+                            shop="{{ shop.id }}">  {{ shop.rating }} </h6>
+                    </li>
+
+                    <script>
+                        {% if request.user.is_authenticated %}
+                            {% if shop in request.user.profile.rating_shops.all %}
+                                shop_rating_show({{ shop.id }}, true);
+                            {% else %}
+                                shop_rating_show({{ shop.id }}, false);
+                            {% endif %}
+                        {% else %}
+                            shop_rating_show({{ shop.id }}, true);
+                        {% endif %}
+                    </script>
+                </ul>
+
+                <br>
+
+                <ul class="list-inline d-flex">
+
+                    <li class="d-flex"><a class="rounded-circle bg-primary p-3 m-2" href="#"><span
+                            class="sr-only">Color primary</span></a></li>
+                    <li class="d-flex"><a class="rounded-circle bg-secondary p-3 m-2" href="#"><span
+                            class="sr-only">Color secondary</span></a></li>
+                    <li class="d-flex"><a class="rounded-circle bg-light p-3 m-2" href="#"><span
+                            class="sr-only">Color light</span></a></li>
+                </ul>
+                <div class="d-flex align-items-center my-4">
+                    <p class="m-0">$399</p>
+                    <label class="sr-only" for="input1-ecommerce-01">Quantity</label>
+                    <input class="form-control w-25 mx-3" id="input1-ecommerce-01" type="number"
+                           placeholder="1">
+                    <button class="btn btn-primary">Buy Now!</button>
+                </div>
+                {% if request.user.is_authenticated %}
+
+                    <p class='text-right'>
+
+                        <button favorite_shop_btn_id="{{ shop.id }}"
+                                class='favorite_shop_add_remove btn btn-danger'></button>
+
+                        {% if shop in request.user.profile.favorite_shops.all %}
+                            <script> favorite_shops('{{ shop.id }}', true);</script>
+                        {% else %}
+                            <script> favorite_shops('{{ shop.id }}', false);</script>
+                        {% endif %}
+
+                        <br>
+
+                        <button likely_shop_btn_id="{{ shop.id }}"
+                                class='likely_shop_add_remove btn btn-danger'></button>
+
+                        {% if shop in request.user.profile.likely_shops.all %}
+                            <script> likely_shops('{{ shop.id }}', true, {{ shop.like }});</script>
+                        {% else %}
+                            <script> likely_shops('{{ shop.id }}', false, {{ shop.like }});</script>
+                        {% endif %}
+
+                    </p>
+                {% endif %}
+                <hr class="my-4">
+                <div class="d-flex align-items-center justify-content-between flex-column flex-sm-row"><a
+                        class="align-items-center" href="#">Добавить в избранное</a>
+                    <ul class="list-inline d-flex mb-0 mt-2 mt-sm-0">
+
+
+                        <li class="px-1">
+                            <a href="#">
+                                <span style="font-size: 2em; color: #ff28a3;">
+                                  <i class="fab fa-instagram"></i>
+                                </span>
+                            </a>
+                        </li>
+
+
+                        <li class="px-2">
+                            <a href="#">
+                                <span style="font-size: 2em; color: #0046d8;">
+                                  <i class="fab fa-vk"></i>
+                                </span>
+                            </a>
+                        </li>
+
+                        <li class="px-1">
+                            <a href="#">
+                                <span style="font-size: 2em; color: #002f8a;">
+                                  <i class="fab fa-facebook"></i>
+                                </span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row flex-xl-nowrap">
+
+
+            <div style="background-color: rgb(241,241,241)" class="border-right col-12 col-md-3 col-xl-2 bd-sidebar">
+
+
+                <br>
+
+                <form id="shop_search">
+                    <div class="input-group mb-3">
+                        <input type="search" class="form-control" id="shop_search_input" placeholder="Поиск...">
+                        <div class="input-group-append">
+                            <button class="btn btn-success" type="submit"><i class="fa fa-search"></i></button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <br>
+
+                <div class="nav flex-column nav-pills" id="menu_category" role="tablist" aria-orientation="vertical">
+
+
+                    <a class="nav-link active" category_select_id="all" data-toggle="pill" href="#">Все</a>
+
+                    {% recursetree category_menu %}
+
+                        <a class="nav-link " style="margin-left: {{ node.level|mul:30 }}px"
+                           category_select_id="{{ node.id }}"
+                           data-toggle="pill"
+                           href="#">{{ node.title }}</a>
+
+                        {% if not node.is_leaf_node %}
+
+                            {{ children }}
+
+                        {% endif %}
+
+                    {% endrecursetree %}
+
+
+                </div>
+
+                <hr/>
+                {% block filter_shop %}
+                    <input type="text" class="js-range-slider" id="price_range" name="my_range" value=""
+                           data-type="double"
+                           data-prefix="Руб."
+                           data-min="{{ min_price }}"
+                           data-max="{{ max_price }}"
+                           data-from="{{ min_price }}"
+                           data-to="{{ max_price }}"
+                           data-grid="true"
+                    />
+
+                    <br>
+
+                    <select class="form-control" id="select_status">
+                        <option sort_type="sort_by_price" sort_value="sort_from_max" selected> Цена: по возрастанию
+                        </option>
+                        <option sort_type="sort_by_price" sort_value="sort_from_zero"> Цена: по убыванию</option>
+                    </select>
+                {% endblock filter_shop %}
+                <br>
+            </div>
+
+
+            <main style="background-color: rgb(232,232,232)"
+                  class="col-12 col-md-9 col-xl-10 py-md-3 pl-md-5 bd-content" role="main">
+                {% block main_shop %}
+                    <section id="services">
+                        {% include "shop_products.html" %}
+                    </section>
+                {% endblock main_shop %}
+            </main>
+
+        </div>
+
+    </div>
+{% endblock content %}
+
+
+
+

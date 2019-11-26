@@ -1,0 +1,116 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+{% load mathfilters %}
+
+<nav id="sidebar" class="{{ class_m }}">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn__custom__inverse sidebar_close">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+    </div>
+
+    <form class="mt-2" id="shop_search">
+        <div class="input-group">
+
+            <input type="search" value="{{ query }}" class="form-control" id="shop_search_input" placeholder="Поиск...">
+
+            <div class="input-group-append">
+                <button class="btn__custom" type="submit"><i
+                        class="fa fa-search"></i>
+                </button>
+            </div>
+
+        </div>
+    </form>
+
+
+    <div class="mt-2 nav flex-column nav-pills" id="menu_category" role="tablist"
+         aria-orientation="vertical">
+
+
+        <a href="{% url 'catalog' %}" class="nav-link {% if active_link == "catalog" %} active {% endif %}"
+           category_select_id="all" data-toggle="pill">Все
+        </a>
+
+        <a href="{% url 'catalog' %}sale" class="nav-link {% if active_link == "sale" %} active {% endif %}"
+           category_select_id="sale" data-toggle="pill">Распродажа
+        </a>
+
+        {% recursetree category_menu %}
+
+            <a href="{{ node.get_absolute_url }}"
+               class="nav-link {% if active_link == node.get_absolute_url %} active {% endif %}"
+               style="margin-left: {{ node.level|mul:30 }}px"
+               category_select_id="{{ node.id }}"
+               data-toggle="pill"
+               href="#">
+                <div style="pointer-events: none;" class="d-flex justify-content-between">
+
+                    <div class="">
+                        {{ node.title }}
+                    </div>
+
+                    <div style="color: #d2c4c4;" class="">
+                        {{ node.category.all.count }}
+                    </div>
+
+                </div>
+
+            </a>
+
+            {% if not node.is_leaf_node %}
+
+                {{ children }}
+
+            {% endif %}
+
+        {% endrecursetree %}
+
+
+    </div>
+
+    <hr/>
+
+    {% block filter_shop %}
+
+
+
+        <div class="filter__shop" style="display:  {% if filter_shop_display == 'none' %} none {% endif %}">
+            <div class="px-3 range-slider color-range">
+                <input type="text" class="js-range-slider" id="price_range" name="my_range" value=""
+                       data-type="double"
+                       data-prefix="Руб."
+                       data
+                       data-min="{{ min_price }}"
+                       data-max="{{ max_price }}"
+                       data-from="{{ min_price }}"
+                       data-to="{{ max_price }}"
+                       data-grid="true"
+                />
+            </div>
+
+            <br>
+
+            <select class="form-control" id="select_status">
+                <option sort_type="sort_by_price" sort_value="sort_from_zero" selected> Цена: по возрастанию
+                </option>
+                <option sort_type="sort_by_price" sort_value="sort_from_max"> Цена: по убыванию
+                </option>
+
+                <option sort_type="sort_by_pop" sort_value="sort_from_zero" selected> Популярность: по возрастанию
+                </option>
+                <option sort_type="sort_by_pop" sort_value="sort_from_max"> Популярность: по убыванию
+                </option>
+
+                <option sort_type="sort_by_rating" sort_value="sort_from_zero" selected> Рейтинг: по возрастанию
+                </option>
+                <option sort_type="sort_by_rating" sort_value="sort_from_max"> Рейтинг: по убыванию
+                </option>
+            </select>
+        </div>
+
+    {% endblock filter_shop %}
+
+</nav>
+<div class="overlay {{ ovr }}"></div>

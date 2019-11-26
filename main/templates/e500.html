@@ -1,0 +1,48 @@
+{% extends 'script.html' %}
+{% load  static %}
+
+
+{% block scr %}
+
+
+    <script>
+
+        $(window).on('load', function () {
+
+
+        });
+
+        $(document).ready(function () {
+
+        })
+    </script>
+
+{% endblock scr %}
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+
+{% block content %}
+    <section>
+        <div class="container-fluid" style="padding-left: 50px; padding-right: 50px">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+
+                <div class="col-12" style="display: flex;justify-content: center;margin-top: 100px;">
+                    Произошла ошибка
+                </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+

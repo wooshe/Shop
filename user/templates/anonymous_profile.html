@@ -1,0 +1,180 @@
+{% extends 'script.html' %}
+
+{% block title %}Bona Fide Sale - Личный кабинет{% endblock title %}
+
+{% block scr %}
+
+    <script>
+
+        $(document).ready(function () {
+
+
+            $(document).on('click', '.order_confirm_delivery', function (e) {
+                e.stopPropagation();
+                order_id = $(this).attr('id');
+                btn = $(this);
+
+                data = {
+                    order_id: order_id,
+                    method: "order_confirm_delivery"
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "anonymous_profile" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+                            btn.replaceWith("                    <div class=' w-100 mt-3 d-flex order_desc_head justify-content-center' style='color: gray'>\n" +
+                                "                        Доставка подтверждена\n" +
+                                "                    </div>");
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', '.order_track', function (e) {
+                e.stopPropagation();
+                hr = $(this).attr('hr');
+                window.open(hr, '_blank ');
+            });
+
+            $(document).on('click', '.order', function (e) {
+                e.preventDefault();
+                order_id = $(this).attr('id');
+
+                data = {
+                    order_id: order_id,
+                    method: "get_order"
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "anonymous_profile" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+
+                            $('#modal_order_desc .modal-body').empty();
+                            $('#modal_order_desc .modal-body').append(data['order_response']);
+                            $('#modal_order_desc').modal('show');
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                });
+            });
+
+            var sp = '{{ success_pay}}';
+
+            if (sp == 'True') {
+                var ru = '{{ redirect_url }}';
+                window.location.href = ru;
+            }
+
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var socket_url = ws_scheme + '://' + window.location.host + "/ws/order_socket/";
+
+            console.log(socket_url)
+
+            var socket = new WebSocket(socket_url)
+
+            socket.onmessage = function (event) {
+                console.log('cart onmessage: ', event)
+                var data = JSON.parse(event.data);
+                var mes = data['message']
+
+                var command = mes['command']
+
+                if (command == "alarm") {
+                    var item_event = mes['event']
+                    var order_id = mes['order_id']
+
+                    if (item_event == "new_item") {
+                        $('#insert').append(mes['order_model'])
+                    } else if (item_event == "select_status_change") {
+                        $('#container_' + order_id).replaceWith(mes['order_model'])
+
+                    }
+                }
+
+
+                sound_alarm()
+
+            };
+
+
+            socket.onopen = function (event) {
+                console.log('cart onopen: ', event)
+                user_id = $('#aboutz').attr("user_id");
+                socket.send(JSON.stringify({
+                    "command": "join",
+                    "user_id": user_id
+                }));
+            };
+
+            socket.onclose = function (event) {
+                console.log('cart closed: ', event)
+            };
+
+        })
+    </script>
+
+{% endblock scr %}
+
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+{% block content %}
+    <section>
+        <div class="anon__profile__section container-fluid">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+                <div class="row px-0 px-lg-3 col-12 mx-0 d-flex justify-content-center">
+                    <div class="content col-12 px-0">
+                        <div class="section__header">Ваши заказы</div>
+
+                        <div id="insert"
+                             class="col-12 px-0 row order_container d-flex justify-content-center">
+
+                            {% if orders.count == 0 %}
+                                {% include 'not_find.html' %}
+                            {% else %}
+                                {% for order in orders %}
+                                    {% include 'object.html' %}
+                                {% endfor %}
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal_order_desc" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-body order_container">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

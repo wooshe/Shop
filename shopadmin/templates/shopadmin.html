@@ -1,0 +1,1101 @@
+{% extends 'script.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+
+{% block title %}Bona Fide Sale - Администратор{% endblock title %}
+
+
+{% block style %}
+    <link rel="stylesheet" href="{% static "css/admin_style.css" %}"/>
+{% endblock style %}
+
+{% block scr %}
+    {% load mathfilters %}
+    <script>
+        function send() {
+            alert('af')
+        }
+
+        $(document).ready(function () {
+
+            $(document).on('click', '.doc_download', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                id = $(this).attr('id');
+                data = {
+                    id: id,
+                    method: "doc_download"
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "shopadmin" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+
+                            window.location.href = data['h'];
+
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+
+            });
+
+            $(document).on('click', '.order_track', function (e) {
+                e.stopPropagation();
+                hr = $(this).attr('hr');
+                window.open(hr, '_blank ');
+            });
+
+            $(document).on('click', '.order', function (e) {
+                e.preventDefault();
+                order_id = $(this).attr('id');
+
+                data = {
+                    order_id: order_id,
+                    method: "get_order"
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "shopadmin" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+
+                            $('#modal_order_desc .modal-body').empty();
+                            $('#modal_order_desc .modal-body').append(data['order_response']);
+                            $('#modal_order_desc').modal('show');
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', '.get_track', function (e) {
+                e.preventDefault();
+                id = $(this).attr('id');
+                data = {
+                    id: id,
+                    method: "get_track"
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "shopadmin" %}',
+                    data: data,
+                    success: function (data) {
+
+
+                        if (data['result'] == 'success') {
+
+                            $('#tracking' + id).html(data['status']);
+                            $('#tracking' + id).css('display', 'block');
+
+                        } else if (data['result'] == 'error') {
+                            $('#tracking' + id).html('Нет данных');
+                            $('#tracking' + id).css('display', 'block');
+                        }
+                    }
+                })
+
+            });
+
+
+            $(document).on('click', '.category_remove_confirm', function (e) {
+                category_id = $(this).attr('id');
+
+                data = {
+                    category_id: category_id,
+
+                    method: "delete"
+                }
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "category_remove" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+                            $('#main_category').replaceWith(data['category_response']);
+                            $('#category_form').replaceWith(data['category_form_response']);
+                            $('#product_form').replaceWith(data['product_form_response']);
+                            $('#main_product').replaceWith(data['main_product_response']);
+                            $('#modal_category_remove').modal('hide');
+                            message(data['message']);
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+            });
+
+            $(document).on('click', '.category_remove', function (e) {
+                category_id = $(this).attr('id');
+
+                data = {
+                    category_id: category_id,
+                    method: "get_about_delete",
+                }
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "category_remove" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+                            $('#category_related').replaceWith(data['category_related']);
+                            $('#modal_category_remove').find('button[name="category_remove_confirm"]').attr('id', category_id);
+                            $('#modal_category_remove').modal('show');
+
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+            });
+
+            $(document).on('click', '.category_edit', function (e) {
+                category_id = $(this).attr('id');
+
+                data = {
+                    category_id: category_id,
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "category_edit" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+                            $('#category_form_edit').replaceWith(data['category_form_edit_response']);
+                            $('#modal_category_edit').modal('show');
+                            $('#category_form_edit').find("select[id='id_parent']").val(data['parent']);
+                            $('#category_form_edit').attr('category_id', category_id);
+
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', '#category_form_edit', function (e) {
+                e.preventDefault();
+                data = $(this).serialize();
+                data += "&category_id=" + $('#category_form_edit').attr('category_id');
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "category_edit" %}',
+                    data: data,
+                    success: function (data) {
+                        console.log(data)
+                        if (data['result'] == 'success') {
+                            $('#main_category').replaceWith(data['category_response']);
+                            $('#category_form').replaceWith(data['category_form_response']);
+                            $('#product_form').replaceWith(data['product_form_response']);
+                            $('#main_product').replaceWith(data['main_product_response'])
+                            $('#modal_category_edit').modal('hide');
+                            message(data['message']);
+
+                        } else if (data['result'] == 'error') {
+                            $('#category_form').replaceWith(data['category_form']);
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', '#category_form', function (e) {
+                e.preventDefault();
+                data = $(this).serialize();
+                data += "&category_id=" + $('#category_form').attr('category_id');
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "category_add" %}',
+                    data: data,
+                    success: function (data) {
+                        console.log(data)
+                        if (data['result'] == 'success') {
+                            $('#main_category').replaceWith(data['category_response']);
+                            $('#category_form').replaceWith(data['category_form_response']);
+                            $('#product_form').replaceWith(data['product_form_response']);
+                            $('#modal_category_add').modal('hide');
+                            message(data['message']);
+
+                        } else if (data['result'] == 'error') {
+                            $('#category_form').replaceWith(data['category_form']);
+                        }
+                    }
+                })
+            });
+
+            $(document).on('show.bs.modal', '#modal_category_add', function (e) {
+                $('#category_form').trigger('reset');
+                var id = $(e.relatedTarget).data('id');
+                $('#category_form').find("select[id='id_parent']").val(id);
+            });
+
+            $(document).on('click', '.product_remove', function (e) {
+                product_id = $(this).attr('id');
+                data = {
+                    product_id: product_id,
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "product_remove" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#product_container_' + product_id).attr('style', 'display: none !important');
+                            $('#modal_product_remove').modal('hide');
+                            message(data['message']);
+
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+            });
+
+            $(document).on('click', '.sale_remove', function (e) {
+                sale_id = $(this).attr('id');
+                data = {
+                    sale_id: sale_id,
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "sale_remove" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#sale_container_' + sale_id).remove();
+                            message(data['message']);
+
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+            });
+
+            $(document).on('show.bs.modal', '#modal_product_remove', function (e) {
+                var id = $(e.relatedTarget).data('id');
+                var name = $(e.relatedTarget).data('name');
+
+                $('#modal_product_remove').find('button[name="product_remove"]').attr('id', id)
+                $('#modal_product_remove').find('p[id="modal_product_remove_text"]').html(name)
+            });
+
+            $(document).on('submit', '#sale_form', function (e) {
+                e.preventDefault();
+                data = $(this).serialize();
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "sale_add" %}',
+                    data: data,
+                    success: function (data) {
+                        console.log(data);
+                        if (data['result'] == 'success') {
+                            $('#main_sale').append(data['sale_response']);
+                            $('#modal_sale_add').modal('hide');
+                            message(data['message']);
+
+                        } else if (data['result'] == 'error') {
+                            $('#sale_form').replaceWith(data['sale_form_response']);
+                        }
+                    }
+                })
+            });
+
+            $(document).on('show.bs.modal', '#modal_sale_add', function (e) {
+                $('#sale_form').trigger('reset');
+            });
+
+            $(document).on('click', '#product_form #id_with_size', function (e) {
+
+                if ($('#id_with_size').prop('checked') == true) {
+                    $('#product_form .empty_add_size').attr('style', 'display: inline-block !important');
+                    $("#product_form #empty_add_size_container .form-row:first-child select :not(:contains('Без'))").attr('style', 'display: block !important');
+                    $("#product_form #empty_add_size_container .form-row:first-child select :contains('Без')").attr('style', 'display: none !important');
+                    $('#product_form #empty_add_size_container .form-row:first-child select').val('---------');
+
+                } else {
+
+                    $('#product_form #id_empty_form-TOTAL_FORMS').val(1);
+                    $('#product_form .empty_add_size').attr('style', 'display: none !important');
+                    $('#product_form #empty_add_size_container .form-row:not(:first-child)').remove();
+                    $('#product_form #empty_add_size_container .form-row:first-child select').val('Без размера');
+                    $("#product_form #empty_add_size_container .form-row:first-child select :not(:contains('Без'))").attr('style', 'display: none !important');
+
+                }
+
+            });
+
+            $(document).on('click', '#product_form_edit #id_with_size', function (e) {
+
+                if ($('#id_with_size').prop('checked') == true) {
+                    $('#product_form_edit .add_size').attr('style', 'display: inline-block !important');
+                    $("#product_form_edit #add_size_container .form-row:first-child select :not(:contains('Без'))").attr('style', 'display: block !important');
+                    $("#product_form_edit #add_size_container .form-row:first-child select :contains('Без')").attr('style', 'display: none !important');
+                    $('#product_form_edit #add_size_container .form-row:first-child select').val('---------');
+
+                } else {
+
+                    $('#product_form_edit #id_empty_form-TOTAL_FORMS').val(1);
+                    $('#product_form_edit .add_size').attr('style', 'display: none !important');
+                    $('#product_form_edit #add_size_container .form-row:not(:first-child)').remove();
+                    $('#product_form_edit #add_size_container .form-row:first-child select').val('Без размера');
+                    $("#product_form_edit #add_size_container .form-row:first-child select :not(:contains('Без'))").attr('style', 'display: none !important');
+
+                }
+
+            });
+
+            $(document).on('shown.bs.modal', '#modal_product_add', function (e) {
+                $('#product_form').trigger('reset');
+
+
+                $('#product_form #id_empty_form-TOTAL_FORMS').val(1);
+                $('#product_form .empty_add_size').attr('style', 'display: none !important');
+                $('#product_form #empty_add_size_container .form-row:not(:first-child)').remove();
+                $('#product_form #empty_add_size_container .form-row:first-child select').val('Без размера');
+                $("#product_form #empty_add_size_container .form-row:first-child select :not(:contains('Без'))").attr('style', 'display: none !important');
+
+            });
+
+            $(document).on('hidden.bs.modal', '#modal_product_add', function (e) {
+
+                for (var key in add_image) {
+                    delete add_image[key];
+                }
+                $('.img_cont').attr('style', 'display: none !important');
+            });
+
+            $(document).on('click', '.remove_size', function (e) {
+                e.preventDefault();
+                size_id = $(this).attr('id');
+                var form_idx = $('#id_form-TOTAL_FORMS').val();
+                $('#size_formset_container_' + size_id).remove();
+                $('#id_' + size_id + '-DELETE').prop('checked', true);
+                $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) - 1);
+            });
+
+            $(document).on('click', '.add_size', function (e) {
+                e.preventDefault();
+                var form_idx = $('#id_form-TOTAL_FORMS').val();
+                var count = parseInt($('#add_size_container').children().last().attr('id').replace('size_formset_container_form-', ''));
+                count = count + 1;
+                $('#add_size_container').append($('#empty_form').html().replace(/__prefix__/g, count));
+                $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+            });
+
+            $(document).on('click', '.empty_remove_size', function (e) {
+                e.preventDefault();
+                size_id = $(this).attr('id');
+                var form_idx = $('#id_empty_form-TOTAL_FORMS').val();
+                $('#empty_size_formset_container_' + size_id).remove();
+                $('#id_' + size_id + '-DELETE').prop('checked', true);
+                $('#id_empty_form-TOTAL_FORMS').val(parseInt(form_idx) - 1);
+            });
+
+            $(document).on('click', '.empty_add_size', function (e) {
+                e.preventDefault();
+                var form_idx = $('#id_empty_form-TOTAL_FORMS').val();
+                var count = parseInt($('#empty_add_size_container').children().last().attr('id').replace('empty_size_formset_container_empty_form-', ''));
+                count = count + 1;
+                $('#empty_add_size_container').append($('#empty_empty_form').html().replace(/__prefix__/g, count));
+                $('#id_empty_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+            });
+
+            $(document).on('submit', '#product_form', function (e) {
+                e.preventDefault();
+                data = $(this).serialize();
+                data += "&product_id=" + $('#product_form').attr('product_id') + "&type_post=check_form";
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "product_add" %}',
+                    data: data,
+                    success: function (data) {
+                        console.log(data)
+                        if (data['result'] == 'success_check_form') {
+
+                            var formData = new FormData($('#product_form')[0]);
+
+                            for (var key in add_image) {
+                                formData.append('image', add_image[key], add_image[key].name);
+                            }
+
+                            formData.append('type_post', 'confirm_form');
+                            formData.append('product_id', $('#product_form').attr('product_id'));
+                            $.ajax({
+                                type: "POST",
+                                url: '{% url "product_add" %}',
+                                data: formData,
+                                contentType: false,
+                                enctype: 'multipart/form-data',
+                                processData: false,
+                                xhr: function () {
+                                    var xhr = new window.XMLHttpRequest();
+                                    $('#progress').css('display', 'block');
+                                    $('#status').css('width', 0);
+                                    $('#status').html('');
+                                    xhr.upload.addEventListener("progress", function (evt) {
+                                        if (evt.lengthComputable) {
+                                            var percentComplete = evt.loaded / evt.total;
+
+                                            $('#status').css('width', (Math.round(percentComplete * 100)) + '%');
+                                            $('#status').html((Math.round(percentComplete * 100)) + '%');
+
+                                        }
+                                    }, false);
+                                    return xhr;
+                                },
+                                success: function (data) {
+                                    console.log(data)
+                                    if (data['result'] == 'success') {
+
+                                        $('#main_product').replaceWith(data['main_product_response'])
+                                        $('#product_form').replaceWith(data['product_form_response'])
+                                        $('#modal_product_add').modal('hide')
+                                        message(data['message']);
+
+                                    } else if (data['result'] == 'error') {
+
+                                    }
+                                }
+                            })
+                        } else if (data['result'] == 'error') {
+                            $('#product_form').replaceWith(data['product_form_response'])
+                        }
+                    }
+                })
+            });
+
+            $(document).on('click', '.product_edit', function (e) {
+                product_id = $(this).attr('id');
+
+                data = {
+                    product_id: product_id,
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "product_edit" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+                            $('#product_form_edit').replaceWith(data['product_form_edit_response']);
+
+                            if ($('#product_form_edit #id_with_size').prop('checked') == false) {
+                                $('#product_form_edit #id_empty_form-TOTAL_FORMS').val(1);
+                                $('#product_form_edit .add_size').attr('style', 'display: none !important');
+                                $('#product_form_edit #add_size_container .form-row:not(:first-child)').remove();
+                                $('#product_form_edit #add_size_container .form-row:first-child select').val('Без размера');
+                                $("#product_form_edit #add_size_container .form-row:first-child select :not(:contains('Без'))").attr('style', 'display: none !important');
+
+                            } else {
+                            }
+
+                            $('#modal_product_edit').modal('show');
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', '#product_form_edit', function (e) {
+                e.preventDefault()
+                data = $(this).serialize();
+                data += "&product_id=" + $('#product_form_edit').attr('product_id') + "&type_post=check_form";
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "product_edit" %}',
+                    data: data,
+                    success: function (data) {
+                        console.log(data)
+                        if (data['result'] == 'success_check_form') {
+
+                            var formData = new FormData($('#product_form_edit')[0]);
+
+                            for (var key in edit_image) {
+                                formData.append('image', edit_image[key], edit_image[key].name);
+                            }
+
+                            formData.append('type_post', 'confirm_form');
+                            formData.append('product_id', $('#product_form_edit').attr('product_id'));
+                            $.ajax({
+                                type: "POST",
+                                url: '{% url "product_edit" %}',
+                                data: formData,
+                                xhr: function () {
+                                    var xhr = new window.XMLHttpRequest();
+                                    $('#progress_edit').css('display', 'block');
+                                    $('#status_edit').css('width', 0);
+                                    $('#status_edit').html('');
+                                    xhr.upload.addEventListener("progress", function (evt) {
+                                        if (evt.lengthComputable) {
+                                            var percentComplete = evt.loaded / evt.total;
+
+                                            $('#status_edit').css('width', (Math.round(percentComplete * 100)) + '%');
+                                            $('#status_edit').html((Math.round(percentComplete * 100)) + '%');
+
+                                        }
+                                    }, false);
+                                    return xhr;
+                                },
+                                contentType: false,
+                                enctype: 'multipart/form-data',
+                                processData: false,
+                                success: function (data) {
+                                    console.log(data)
+                                    if (data['result'] == 'success') {
+
+                                        $('#main_product').replaceWith(data['main_product_response'])
+                                        $('#modal_product_edit').modal('hide')
+                                        message(data['message']);
+
+                                    } else if (data['result'] == 'error') {
+
+                                    }
+                                }
+                            })
+                        } else if (data['result'] == 'error') {
+                            $('#product_form_edit').replaceWith(data['product_form_edit_response'])
+                        }
+                    }
+                })
+            });
+
+            $(document).on('hidden.bs.modal', '#modal_product_edit', function (e) {
+
+                for (var key in edit_image) {
+                    delete edit_image[key];
+                }
+                $('.img_cont_edit').attr('style', 'display: none !important');
+            });
+
+
+            var add_image = {};
+            var edit_image = {};
+
+            $(document).on('click', '.photo_rem_object', function (e) {
+
+                photo_id = $(this).attr('id_obj');
+
+                data = {
+                    photo_id: photo_id,
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "product_photo_remove" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+                            $('#photo_con' + photo_id).attr('style', 'display: none !important');
+
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                })
+
+            });
+
+            $(document).on('click', '.image_rem_object_edit', function (e) {
+                var id = $(this).attr('id_obj_edit');
+
+                delete edit_image[id];
+                $('#' + id).val("");
+                $('#img_con_edit' + id).attr('style', 'display: none !important')
+            });
+
+            $(document).on('change', '.image_add_object_edit', function (e) {
+                var id = $(this).attr('id');
+
+                file = $('#' + id)[0].files[0];
+                if (!file.type.match('image')) {
+                    delete edit_image[id];
+                    $('#' + id).val("");
+                    $('#img_con_edit' + id).attr('style', 'display: none !important')
+                    return;
+                }
+
+                edit_image[id] = file;
+
+                var picReader = new FileReader();
+
+
+                picReader["gen"] = id;
+                picReader.addEventListener("load", function (event) {
+
+                    var picFile = event.target;
+                    gen = picFile["gen"];
+
+                    $('#img_gen_edit' + id).attr('src', picFile.result)
+
+                });
+                picReader.readAsDataURL(edit_image[id]);
+
+                $('#' + id).val("");
+            });
+
+            $(document).on('change', '#image_file_edit', function (e) {
+                var files = event.target.files;
+
+                for (var i = 0; i < files.length; i++) {
+
+                    var file = files[i];
+
+                    if (!file.type.match('image'))
+                        continue;
+
+                    var picReader = new FileReader();
+
+                    var gen = uuidv4();
+                    edit_image[gen] = file;
+                    picReader["gen"] = gen;
+                    picReader.addEventListener("load", function (event) {
+
+                        var picFile = event.target;
+                        gen = picFile["gen"];
+
+                        $('#image_form_edit').before("\t\t<div id=\"img_con_edit" + gen + "\" class=\"img_cont_edit col-6 col-sm-4 col-lg-3 d-flex flex-column mb-2\">\n" +
+
+                            "<div class=\"d-flex justify-content-end mb-1\"> <span id_obj_edit=\"" + gen + "\" class=\"image_rem_object_edit clickable btn__custom__inverse\" data-effect=\"fadeOut\"><i class=\"fa fa-times\"></i></span></div>" +
+
+                            "                    <label   for=\"" + gen + "\"><img id=\"img_gen_edit" + gen + "\" class=\"rounded card-img-top\" src=\"" + picFile.result + "\"></label>\n" +
+                            "                    <input class=\"image_add_object_edit\" id=\"" + gen + "\" accept=\"image/jpg,image/png,image/jpeg,image/bmp\" name=\"image\" hidden\n" +
+                            "                           type=\"file\"/>\n" +
+                            "        </div>");
+
+                    });
+                    picReader.readAsDataURL(edit_image[gen]);
+
+
+                }
+                $("#image_file_edit").val("");
+            });
+
+            $(document).on('click', '.image_rem_object', function (e) {
+                var id = $(this).attr('id_obj');
+
+                delete add_image[id];
+                $('#' + id).val("");
+                $('#img_con' + id).attr('style', 'display: none !important')
+
+            });
+
+            $(document).on('change', '.image_add_object', function (e) {
+                var id = $(this).attr('id');
+
+                file = $('#' + id)[0].files[0];
+                if (!file.type.match('image')) {
+                    delete add_image[id];
+                    $('#' + id).val("");
+                    $('#img_con' + id).attr('style', 'display: none !important')
+                    return;
+                }
+
+                add_image[id] = file;
+
+                var picReader = new FileReader();
+
+
+                picReader["gen"] = id;
+                picReader.addEventListener("load", function (event) {
+
+                    var picFile = event.target;
+                    gen = picFile["gen"];
+
+                    $('#img_gen' + id).attr('src', picFile.result)
+
+                });
+                picReader.readAsDataURL(add_image[id]);
+
+                $('#' + id).val("");
+            });
+
+            $(document).on('change', '#image_file', function (e) {
+
+                var files = event.target.files;
+
+                for (var i = 0; i < files.length; i++) {
+
+                    var file = files[i];
+
+                    if (!file.type.match('image'))
+                        continue;
+
+                    var picReader = new FileReader();
+
+                    var gen = uuidv4();
+                    add_image[gen] = file;
+                    picReader["gen"] = gen;
+                    picReader.addEventListener("load", function (event) {
+
+                        var picFile = event.target;
+                        gen = picFile["gen"];
+
+                        $('#image_form').before("\t\t<div id=\"img_con" + gen + "\" class=\"img_cont col-6 col-sm-4 col-lg-3 d-flex flex-column mb-2\">\n" +
+                            "<div class=\"d-flex justify-content-end mb-1\"> <span id_obj=\"" + gen + "\" class=\"image_rem_object clickable btn__custom__inverse\" data-effect=\"fadeOut\"><i class=\"fa fa-times\"></i></span></div>" +
+                            "                    <label   for=\"" + gen + "\"><img id=\"img_gen" + gen + "\" class=\"rounded card-img-top\" src=\"" + picFile.result + "\"></label>\n" +
+                            "                    <input class=\"image_add_object\" id=\"" + gen + "\" accept=\"image/jpg,image/png,image/jpeg,image/bmp\" name=\"image\" hidden\n" +
+                            "                           type=\"file\"/>\n" +
+                            "        </div>");
+
+                    });
+                    picReader.readAsDataURL(add_image[gen]);
+
+
+                }
+                $("#image_file").val("");
+            });
+
+        });
+
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+    </script>
+
+{% endblock scr %}
+
+
+
+
+
+{% block header_cart %}
+    header_cart
+{% endblock header_cart %}
+
+{% block navbar_cart %}
+
+{% endblock navbar_cart %}
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+{% block content %}
+
+    <div id="about_page" user_id="{{ request.user.id }}"></div>
+
+    <section>
+        <div class="admin__section container-fluid">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+                <div class="row px-0 px-lg-3 col-12 mx-0 d-flex justify-content-center">
+
+                    <div class="content col-12 px-0">
+                        <div class="px-0 col-12"
+                             style="position: sticky; top: 0px; z-index: 998; background: white;">
+                            <div class="nav nav nav-pills justify-content-center justify-content-lg-around pt-4 pb-2 nav-pills"
+                                 id="menu"
+                                 role="tablist"
+                                 aria-orientation="vertical">
+                                <a class="nav-link active" data-toggle="pill" href="#order">Заказы</a>
+                                <a class="nav-link " data-toggle="pill" href="#sale_tab">Промокоды</a>
+                                <a class="nav-link " data-toggle="pill" href="#category">Категории</a>
+                                <a class="nav-link " data-toggle="pill" href="#product">Товары</a>
+                                <a class="nav-link " data-toggle="pill" href="#about">Общие</a>
+                            </div>
+                            <hr>
+                        </div>
+
+                        <div class="row mt-4 col-12 px-0 mx-0">
+                            <div class="col-12">
+
+                                <div class="tab-content" id="v-pills-tabContent">
+
+                                    <div class="row  full_tab justify-content-center tab-pane fade show active"
+                                         id="order" role="tabpanel"
+                                         aria-labelledby="v-pills-home-tab">
+                                        <div id="admin_insert_order"
+                                             class="px-2 row order_container d-flex justify-content-center">
+                                            {% if orders.count == 0 %}
+                                                {% include 'not_find.html' %}
+                                            {% else %}
+                                                {% for order in orders %}
+                                                    {% include 'object_admin.html' %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row full_tab  justify-content-center tab-pane fade" id="sale_tab"
+                                         role="tabpanel"
+                                         aria-labelledby="v-pills-profile-tab">
+
+                                        <div class="d-flex justify-content-start flex-column  mb-3">
+                                            <button id="sale_add" data-toggle="modal"
+                                                    data-target="#modal_sale_add"
+                                                    class='btn__custom__inverse align-self-end mb-2'>Добавить промокод
+                                            </button>
+
+                                            <div id="main_sale">
+                                                {% for sal in sale %}
+                                                    {% include 'shopadmin_sale.html' %}
+                                                {% endfor %}
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row full_tab  justify-content-center tab-pane fade" id="category"
+                                         role="tabpanel"
+                                         aria-labelledby="v-pills-messages-tab">
+
+                                        <div class="d-flex justify-content-end  mb-3">
+                                            <button id="{{ node.id }}" data-toggle="modal"
+                                                    data-target="#modal_category_add"
+                                                    class='btn__custom__inverse'>Добавить категорию
+                                            </button>
+                                        </div>
+
+
+                                        {% include 'shopadmin_category_main.html' %}
+
+                                    </div>
+
+                                    <div class="row full_tab  justify-content-center tab-pane fade" id="product"
+                                         role="tabpanel"
+                                         aria-labelledby="v-pills-settings-tab">
+
+
+                                        <div class="d-flex justify-content-end  mb-3">
+                                            <button id="{{ product.id }}" data-toggle="modal"
+                                                    data-target="#modal_product_add"
+                                                    {{ product.id }} class='btn__custom__inverse'>Добавить товар
+                                            </button>
+                                        </div>
+
+                                        {% include 'shopadmin_product_main.html' %}
+
+                                    </div>
+
+                                    <div class="row full_tab  justify-content-center tab-pane fade" id="about"
+                                         role="tabpanel"
+                                         aria-labelledby="v-pills-settings-tab">
+                                        <div class="row">
+                                            <h3>Информация магазина</h3>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="modal fade" id="modal_product_edit" tabindex="-1">
+        <div class="modal-lg modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактирование товара!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    <form id="product_form_edit">
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_product_add" tabindex="-1">
+        <div class="modal-lg modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавление товара!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'shopadmin_product_form.html' %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_product_remove" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Удаление товара!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    <p id="modal_product_remove_text"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="button" name="product_remove"
+                            class="product_remove btn btn-danger">Удалить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_category_remove" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Удаление категории!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'shopadmin_category_related.html' %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="button" name="category_remove_confirm"
+                            class="category_remove_confirm btn btn-danger">Удалить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_category_add" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавление категории!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'shopadmin_category_form.html' %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_sale_add" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавление промокода!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'shopadmin_sale_form.html' %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_category_edit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Редактирование категории!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'shopadmin_category_form_edit.html' %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_order_desc" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-body order_container">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}
+
+
+
+

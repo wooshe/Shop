@@ -1,0 +1,214 @@
+@charset "UTF-8";
+.text-through {
+  text-decoration: line-through;
+  color: #8d8d8d;
+}
+
+.rub, .cart__section .header__price:after, .cart__section .table__price:after, .cart__section .table__result:after, .cart__section #cart_price_all:after {
+  content: "р.";
+  padding-left: 2px;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border: 1px solid #fd0e7f;
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+}
+
+.form-control:hover {
+  box-shadow: none;
+  border: 1px solid #fd0e7f;
+}
+
+.p-0, .pm-0 {
+  padding: 0 !important;
+}
+
+.m-0, .pm-0 {
+  margin: 0 !important;
+}
+
+.img_full {
+  width: 100%;
+  height: 100%;
+}
+
+a {
+  color: #4b4b4b;
+  text-decoration: none;
+}
+
+.header.header_cart {
+  margin: 0;
+}
+
+.cart__section .section__header {
+  font-size: 26px !important;
+  font-weight: 400 !important;
+  opacity: 0.8 !important;
+  justify-content: flex-start !important;
+}
+.cart__section .header__title {
+  font-size: 36px !important;
+  font-weight: 800 !important;
+  opacity: 0.8 !important;
+}
+.cart__section .header__count {
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  opacity: 0.8 !important;
+  color: #fd0e7f;
+}
+.cart__section .header__text {
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  opacity: 0.8 !important;
+}
+.cart__section .header__price {
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  opacity: 0.8 !important;
+  color: #fd0e7f;
+}
+.cart__section .product__footer__size__value {
+  color: #fd0e7f;
+  font-weight: 600;
+}
+.cart__section .table {
+  font-size: 14px;
+}
+.cart__section .table__head {
+  opacity: 0.6;
+}
+.cart__section .table__price {
+  opacity: 0.8;
+  font-weight: 600;
+}
+.cart__section .table__count .input-group {
+  background: inherit !important;
+}
+.cart__section .table__count .input-group .input-group-prepend {
+  background: inherit !important;
+}
+.cart__section .table__count .input-group .input-group-prepend .btn {
+  background: inherit !important;
+}
+.cart__section .table__count .input-group .change_item_count {
+  background: inherit !important;
+  max-width: 60px !important;
+}
+.cart__section .table__count .input-group .input-group-append {
+  background: inherit !important;
+}
+.cart__section .table__count .input-group .input-group-append .btn {
+  background: inherit !important;
+}
+.cart__section .table__result {
+  opacity: 0.8;
+  color: #fd0e7f;
+  font-size: 12px;
+  font-weight: 600;
+}
+.cart__section .all_result {
+  font-weight: 600;
+  color: #fd0e7f;
+}
+
+@media (max-width: 576px) {
+  .cart__section .remove_all_from_cart {
+    line-height: 15px;
+    font-size: 14px;
+  }
+  .cart__section #order {
+    line-height: 15px;
+    font-size: 14px;
+  }
+  .cart__section .section__header {
+    font-size: 14px !important;
+  }
+  .cart__section .header__title {
+    font-size: 24px !important;
+  }
+  .cart__section .header__count {
+    font-size: 14px !important;
+  }
+  .cart__section .header__text {
+    font-size: 10px !important;
+  }
+  .cart__section .header__price {
+    font-size: 14px !important;
+  }
+  .cart__section .product__body {
+    height: 30px !important;
+  }
+  .cart__section .product__footer__size {
+    font-size: 10px;
+  }
+  .cart__section .change_item_count {
+    height: 30px !important;
+  }
+
+  .suggestions-suggestions {
+    font-size: 8px !important;
+  }
+
+  .suggestions-addon {
+    width: 10px !important;
+    right: 10px !important;
+    left: auto;
+  }
+
+  #address_form label {
+    font-size: 10px !important;
+    font-weight: 400 !important;
+    margin-bottom: 0;
+  }
+  #address_form .form-row, #address_form .form-group {
+    margin-bottom: 0;
+  }
+  #address_form .form-control {
+    font-size: 10px !important;
+  }
+}
+.form-control:disabled, .form-control[readonly] {
+  opacity: 1;
+  background-color: inherit;
+}
+
+.was-validated .form-control:valid, .form-control.is-valid {
+  border: 1px solid #6b6b6b !important;
+  background-image: none !important;
+}
+
+.was-validated .form-control:invalid, .form-control.is-invalid {
+  background-image: none !important;
+}
+
+.suggestions-suggestions {
+  font-size: 10px;
+}
+
+.suggestions-addon {
+  width: 16px !important;
+  left: 117px;
+}
+
+#address_form label {
+  font-size: 14px;
+  color: #fd0e7f;
+  opacity: 0.6;
+  font-weight: 600;
+}
+#address_form .form-control {
+  font-size: 14px;
+}
+#address_form .suggestions-promo svg {
+  height: 10px !important;
+  vertical-align: bottom;
+}
+
+/*# sourceMappingURL=cart_style.css.map */

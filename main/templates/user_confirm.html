@@ -1,0 +1,59 @@
+{% extends 'script.html' %}
+{% load  static %}
+
+{% block title %}Bona Fide Sale - Пользовательское соглашение{% endblock title %}
+
+{% block scr %}
+
+    <script>
+
+        $(window).on('load', function () {
+
+
+        });
+
+        $(document).ready(function () {
+
+        })
+    </script>
+
+{% endblock scr %}
+
+
+
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+
+
+{% block content %}
+    <section>
+        <div class="container-fluid" style="padding-left: 50px; padding-right: 50px">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+                <div class="col-12">
+                    <div class="section__header start">Пользовательское соглашение</div>
+                    <hr>
+
+                    <p>Text</p>
+
+                    <a href="/media/default/bfide_vozvrat.doc">
+                        <button class="btn__custom__inverse">
+                            Скачать пользовательское соглашение
+                        </button>
+                    </a>
+
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+{% endblock content %}

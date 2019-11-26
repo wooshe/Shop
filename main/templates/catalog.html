@@ -1,0 +1,349 @@
+{% extends 'script.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+{% load mathfilters %}
+
+{% block title %}Bona Fide Sale - Каталог товаров{% endblock title %}
+
+{% block scr %}
+
+    <script>
+
+        var page = 1;
+        var last = '';
+
+        function search_ajax(data) {
+
+            if (data['event'] != "range_change") {
+                $('#sidebar').removeClass('active');
+                $('.overlay').removeClass('active');
+            }
+
+            if (data['event'] == "shop_search") {
+
+                $('#select_status option').prop('selected', function () {
+                    return this.defaultSelected;
+                });
+
+                $("#menu_category .active").removeClass("active");
+
+                $('#more').attr("style", "display: none !important");
+                $('.product_loader').attr("style", "display: flex !important");
+                $('#replace').attr("style", "display: none !important");
+
+
+            } else if (data['event'] == "category_change") {
+
+
+                $('#shop_search_input').val('');
+
+                $('#more').attr("style", "display: none !important");
+                $('.product_loader').attr("style", "display: flex !important");
+                $('#replace').attr("style", "display: none !important");
+
+
+            } else if (data['event'] == "sort_change") {
+
+                $('#more').attr("style", "display: none !important");
+                $('.product_loader').attr("style", "display: flex !important");
+                $('#replace').attr("style", "display: none !important");
+
+            } else if (data['event'] == "range_change") {
+
+                $('#more').attr("style", "display: none !important");
+                $('.product_loader').attr("style", "display: flex !important");
+                $('#replace').attr("style", "display: none !important");
+
+            } else if (data['event'] == "pagination") {
+
+                $('#more').attr("style", "display: none !important");
+                $('.product_loader').attr("style", "display: flex !important");
+            }
+
+
+            $.ajax({
+                type: "GET",
+                url: '{% url "shop_search" %}',
+                data: data,
+                success: function (data) {
+
+                    console.log("shop_search: " + JSON.stringify(data));
+
+
+                    if (data['event'] == "shop_search") {
+                        range_update_price(data);
+                        $('#replace').empty();
+                        $('#replace').append(data['product_model']);
+                        $('#replace').attr("style", "display: flex !important");
+                        $('.product_loader').attr("style", "display: none !important");
+
+                    } else if (data['event'] == "category_change") {
+
+                        range_update_price(data);
+                        $('#replace').empty();
+                        $('#replace').append(data['product_model']);
+                        $('#replace').attr("style", "display: flex !important");
+                        $('.product_loader').attr("style", "display: none !important");
+
+                    } else if (data['event'] == "sort_change") {
+                        range_update_price(data);
+                        $('#replace').empty();
+                        $('#replace').append(data['product_model']);
+                        $('#replace').attr("style", "display: flex !important");
+                        $('.product_loader').attr("style", "display: none !important");
+
+                    } else if (data['event'] == "range_change") {
+                        var my_range = $("#price_range").data("ionRangeSlider");
+                        my_range.update({
+                            from: data['from_price'],
+                            to: data['to_price'],
+                            min: data['min_price'],
+                            max: data['max_price'],
+                        });
+                        $('#replace').empty();
+                        $('#replace').append(data['product_model']);
+                        $('#replace').attr("style", "display: flex !important");
+                        $('.product_loader').attr("style", "display: none !important");
+
+                    } else if (data['event'] == "pagination") {
+
+                        $('#replace').append(data['product_model']);
+                        $('.product_loader').attr("style", "display: none !important");
+
+                    }
+
+                    if (data['pagination_end'] == 'False') {
+                        $('#more').css('display', 'flex');
+                    } else {
+                        $('#more').css('display', 'none');
+                    }
+
+                }
+            })
+        };
+
+
+        function range_update_price(data) {
+            var my_range = $("#price_range").data("ionRangeSlider");
+            my_range.update({
+                from: data['min_price'],
+                to: data['max_price'],
+                min: data['min_price'],
+                max: data['max_price'],
+            });
+
+        };
+
+
+        function scrollToAnchor() {
+            var aTag = last;
+            $('html,body').animate({scrollTop: aTag.offset().top}, 700);
+        }
+
+        $(document).ready(function () {
+
+
+            $('#shop_search').on('submit', function (e) {
+                e.preventDefault();
+                query = $('#shop_search_input').val();
+                event = "shop_search";
+                page = 1;
+
+                if (query == '')
+                    return false;
+
+                let path = '{% url "catalog"  %}?query=' + query + '';
+                window.history.pushState({route: path}, "Bona Fide Sale", path);
+
+                var sort_value = $('#select_status option:selected')[0].getAttribute('sort_value');
+                var sort_type = $('#select_status option:selected')[0].getAttribute('sort_type');
+
+                data = {
+                    sort_value: sort_value,
+                    sort_type: sort_type,
+                    event: event,
+                    query: query,
+                    page: page
+                };
+
+                search_ajax(data)
+
+
+            });
+
+            $('#menu_category .nav-link ').click(function (e) {
+
+                var category_select_id = $(e.target).attr('category_select_id');
+
+                if (category_select_id == undefined)
+                    return;
+
+                page = 1;
+
+                let path = e.target.href;
+                window.history.pushState({route: path}, "Bona Fide Sale", path);
+
+                var sort_value = $('#select_status option:selected')[0].getAttribute('sort_value');
+                var sort_type = $('#select_status option:selected')[0].getAttribute('sort_type');
+
+                data = {
+                    sort_value: sort_value,
+                    sort_type: sort_type,
+                    category_select_id: category_select_id,
+                    event: "category_change",
+                    page: page
+                };
+
+                search_ajax(data)
+
+            });
+
+            $(document).on('click', '#more', function (e) {
+
+                query = $('#shop_search_input').val();
+                var slider = $("#price_range").data("ionRangeSlider");
+                var price_from = slider.result.from;
+                var price_to = slider.result.to;
+
+                last = $('#replace').find('.product_carousel').last();
+
+                var sort_value = $('#select_status option:selected')[0].getAttribute('sort_value');
+                var sort_type = $('#select_status option:selected')[0].getAttribute('sort_type');
+                var category_select_id = $("#menu_category .active").attr("category_select_id");
+
+                page = page + 1;
+
+                data = {
+                    category_select_id: category_select_id,
+                    sort_value: sort_value,
+                    sort_type: sort_type,
+                    price_from: price_from,
+                    price_to: price_to,
+                    event: "pagination",
+                    query: query,
+                    page: page
+                };
+                search_ajax(data);
+
+            });
+
+            $(document).on('change', '#select_status', function () {
+
+                query = $('#shop_search_input').val();
+                var sort_value = this.options[this.selectedIndex].getAttribute('sort_value');
+                var sort_type = this.options[this.selectedIndex].getAttribute('sort_type');
+                var category_select_id = $("#menu_category .active").attr("category_select_id");
+
+                var slider = $("#price_range").data("ionRangeSlider");
+                var price_from = slider.result.from;
+                var price_to = slider.result.to;
+
+                page = 1;
+
+                data = {
+                    category_select_id: category_select_id,
+                    sort_value: sort_value,
+                    sort_type: sort_type,
+                    price_from: price_from,
+                    price_to: price_to,
+                    event: "sort_change",
+                    query: query,
+                    page: page
+                };
+                search_ajax(data);
+
+            });
+
+            $(".js-range-slider").ionRangeSlider({
+
+                onFinish: function (event) {
+                    page = 1;
+                    query = $('#shop_search_input').val();
+                    var slider = $("#price_range").data("ionRangeSlider");
+                    var price_from = slider.result.from;
+                    var price_to = slider.result.to;
+                    var sort_value = $('#select_status option:selected')[0].getAttribute('sort_value');
+                    var sort_type = $('#select_status option:selected')[0].getAttribute('sort_type');
+                    var category_select_id = $("#menu_category .active").attr("category_select_id");
+
+                    data = {
+                        category_select_id: category_select_id,
+                        sort_value: sort_value,
+                        sort_type: sort_type,
+                        price_from: price_from,
+                        price_to: price_to,
+                        event: "range_change",
+                        query: query,
+                        page: page
+                    };
+                    search_ajax(data);
+                },
+
+            });
+
+            $(window).resize();
+            $(window).lazyLoadXT();
+
+            var all_pagination_end = "{{ all_pagination_end }}";
+
+            if (all_pagination_end == "True") {
+                $('#more').css('display', 'none');
+            } else {
+                $('#more').css('display', 'flex');
+            }
+
+        })
+    </script>
+
+{% endblock scr %}
+
+
+{% block breadcrumb %}
+
+
+
+{% endblock breadcrumb %}
+
+
+
+{% block content %}
+
+
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-2 col-md-2 pm-0">
+                    {% include 'sidebar.html' %}
+                </div>
+
+                <div class="col-lg-10 col-md-12">
+
+                    <div class="row d-flex justify-content-center" id="replace">
+                        {% if products.count == 0 %}
+                            {% include 'not_find.html' %}
+                        {% else %}
+                            {% include 'shop_products.html' %}
+                        {% endif %}
+                    </div>
+
+
+                    <div class="more">
+                        <button class="btn__custom" id="more">Показать еще</button>
+                    </div>
+
+
+                    <div class="product_loader">
+                        <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                            <img src="{% static '500px.svg' %}">
+                            <div style="color: #fd0e7f"> Загрузка ...</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+
+

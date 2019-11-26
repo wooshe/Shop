@@ -1,0 +1,106 @@
+{% load mptt_tags %}
+{% load bootstrap4 %}
+{#{% bootstrap_css %}#}
+{% load static %}
+
+
+
+<form id="product_form">
+    {% csrf_token %}
+    {% bootstrap_form product_form required_css_class='not_message' show_help=False %}
+
+    <br>
+
+    <h5>Размеры</h5>
+
+    <table>
+        {{ empty_size_formset.management_form }}
+        <div id="empty_add_size_container">
+            {% for form in empty_size_formset %}
+                <div id='empty_size_formset_container_{{ form.prefix }}' class="form-row">
+                    <div class="col">
+                        {% bootstrap_field form.size required_css_class='not_message' show_help=False %}
+                    </div>
+
+                    <div class="col">
+                        {% if empty_size_formset.can_delete %}
+                            <button type="button"
+                                    class="empty_remove_size close" id='{{ form.prefix }}' aria-label="Close">
+                                                                <span aria-hidden="true"
+                                                                      style="color: #de0014">&times;</span>
+                            </button>
+                            <div style="display: none">
+                                {{ form.DELETE }}
+                            </div>
+                        {% endif %}
+
+                        {% bootstrap_field form.count required_css_class='not_message' show_help=False %}
+                    </div>
+
+                    <div class="col" style="display: none">
+                        {% bootstrap_field form.id required_css_class='not_message' show_help=False %}
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="empty_empty_form" style="display:none">
+            <div id='empty_size_formset_container_{{ empty_size_formset.empty_form.prefix }}' class="form-row">
+                <div class="col">
+                    {% bootstrap_field empty_size_formset.empty_form.size required_css_class='not_message' show_help=False %}
+                </div>
+
+                <div class="col">
+                    {% if empty_size_formset.can_delete %}
+                        <button type="button"
+                                class="empty_remove_size close" id='{{ empty_size_formset.empty_form.prefix }}'
+                                aria-label="Close">
+                                                                <span aria-hidden="true"
+                                                                      style="color: #de0014">&times;</span>
+                        </button>
+                        <div style="display: none">
+                            {{ form.DELETE }}
+                        </div>
+                    {% endif %}
+
+                    {% bootstrap_field empty_size_formset.empty_form.count required_css_class='not_message' show_help=False %}
+                </div>
+
+                <div class="col" style="display: none">
+                    {% bootstrap_field empty_size_formset.empty_form.id required_css_class='not_message' show_help=False %}
+                </div>
+
+            </div>
+        </div>
+
+        <button class="empty_add_size btn">Добавить размер</button>
+
+    </table>
+
+    <br>
+    <h5>Фото</h5>
+
+    <div class="row">
+
+        <div id="image_form" class="col-6 col-sm-4 col-lg-3 d-flex justify-content-center align-items-center">
+
+            <label class="d-flex justify-content-center align-items-center" for="image_file">
+                <img class="btn rounded card-img-top" src="{% static 'add.png' %}"
+                     style="width: 50%">
+            </label>
+            <input id="image_file" accept="image/jpg,image/png,image/jpeg,image/bmp" name="image" hidden
+                   type="file" multiple/>
+        </div>
+    </div>
+
+    <br>
+
+    <div id="progress" class="progress" style="display:none;">
+        <div id="status" class="progress-bar" role="progressbar" style="width: 0;"
+             aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <button type="submit" class="btn__custom__inverse">Сохранить</button>
+</form>
+
+

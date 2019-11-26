@@ -1,0 +1,131 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+
+    <section class="px-1">
+        <div class="cart__section container-fluid">
+            <div class="row">
+                <div class="row px-0 px-lg-3 col-12 mx-0 d-flex justify-content-center">
+                    <div class="content col-12 px-0">
+                        <div class="px-0 col-12"
+                             style="position: sticky; top: 0px; z-index: 999; background: white;">
+                            <div class="d-flex flex-column align-items-start pb-2 justify-content-center">
+
+                                <div class="header__title w-100">Оформление заказа</div>
+
+                                <div class="d-flex  w-100 align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-start">
+                                        <div class="header__text mr-2">
+                                            Товаров:
+                                        </div>
+                                        <div class="header__count mr-2">
+                                            {{ cart.items.count }}
+                                        </div>
+                                        <div class="header__text mr-2">
+                                            на сумму:
+                                        </div>
+                                        <div id='cart_price_all' class="header__price mr-2">
+                                            {{ cart.price_all }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex  w-100 align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-start">
+                                        <div class="header__text mr-2">
+                                            Доставка:
+                                        </div>
+                                        <div id='delivery_price' class="header__price mr-2">
+                                            {{ delivery_price }}
+                                        </div>
+
+
+                                        <div class="header__text mr-2 delivery_date">
+                                            от
+                                        </div>
+                                        <div id='delivery_min_day' style="color:#fd0e7f;"
+                                             class="delivery_date header__text mr-2">
+                                            {{ delivery_min_day }}
+                                        </div>
+                                        <div class="header__text mr-2 delivery_date">
+                                            до
+                                        </div>
+                                        <div id='delivery_max_day' style="color:#fd0e7f;"
+                                             class="delivery_date header__text mr-2">
+                                            {{ delivery_max_day }}
+                                        </div>
+
+                                        <div class="header__text mr-2 delivery_date">
+                                            дней
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                                <div class="d-flex  w-100 align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-start">
+                                        <div class="header__text mr-2">
+                                            Промокод:
+                                        </div>
+
+                                        <div style="color:#fd0e7f;"
+                                             class="delivery_date header__text mr-2">
+                                            {{ sale }} %
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="d-flex  w-100 align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-start">
+                                        <div class="header__text mr-2">
+                                            Итого:
+                                        </div>
+                                        <div id='delivery_price' class="header__price mr-2">
+                                            {{ delivery_and_cart_price }}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <button id="order_confirm" class='btn__custom'>Заказать</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row mt-4 col-12 px-0 mx-0">
+                            <div class="col-12 col-lg-7">
+                                <div class="row d-flex justify-content-center">
+                                    {% include 'cart_confirm_products.html' with products=cart.items.all %}
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-5">
+                                {% include 'address_change.html' %}
+                            </div>
+
+                            <div class="col-12 mt-4 d-flex justify-content-center">
+                                <button id="order_confirm" class='btn__custom'>Заказать</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock content %}
+
+{% block contact %}
+
+{% endblock contact %}

@@ -1,0 +1,30 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+
+
+<div id="category_related">
+    <p>Также удалятся следующие объекты:</p>
+    <ul>
+        {% recursetree related_category %}
+            <li>
+                Категория: {{ node.title }}
+
+                <ul>
+                    {% for product in node.related_product %}
+                        <li>
+                        {{ product.name }}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endrecursetree %}
+    </ul>
+</div>
+

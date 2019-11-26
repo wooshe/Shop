@@ -1,0 +1,152 @@
+{% extends 'script.html' %}
+
+{% block title %}Bona Fide Sale - Доставка и оплата{% endblock title %}
+
+{% load  static %}
+{% block scr %}
+    <link href="{% static "js/vegas/vegas.min.css" %}" rel="stylesheet"/>
+    <script src="{% static "js/vegas/vegas.min.js" %}"></script>
+
+    <script>
+
+        $(window).on('load', function () {
+
+
+        });
+
+        $(document).ready(function () {
+            $('.delivery_img').vegas({
+                cover: true,
+                delay: 3000,
+                timer: false,
+                shuffle: true,
+                firstTransition: 'blur',
+                firstTransitionDuration: 2000,
+                transition: 'blur',
+                transitionDuration: 2000,
+                slides: [
+                    {src: '{% static "delivery_background.jpg" %}'}
+                ]
+            });
+
+        })
+    </script>
+
+{% endblock scr %}
+
+
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+
+
+{% block content %}
+    <section>
+        <div class="container-fluid"style="padding-left: 50px; padding-right: 50px">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+                <div class="col-12">
+                    <div class="section__header start">Доставка и оплата</div>
+                    <hr>
+                </div>
+
+                <div class="col-lg-6">
+                    <p>После добавления товара в корзину внимательно заполните поля для оформления заказа и внесите
+                        оплату.
+                        Мы отправим посылку через 1-3 рабочих дня, не считая дня оплаты любым удобным для вас
+                        способом.</p>
+
+
+                    <p>При оплате заказа банковской картой, обработка платежа (включая ввод номера карты) происходит на
+                        защищенной странице процессинговой системы, которая прошла международную сертификацию. Это
+                        значит,
+                        что Ваши конфиденциальные данные (реквизиты карты, регистрационные данные и др.) не поступают в
+                        интернет-магазин, их обработка полностью защищена и никто, в том числе интернет-магазин
+                        bonafidesale.ru, не
+                        может получить персональные и банковские данные клиента.
+
+                    </p>
+
+                    <p>
+                        При работе с карточными данными применяется стандарт защиты информации, разработанный
+                        международными
+                        платёжными системами Visa и MasterCard - Payment Card Industry Data Security Standard (PCI DSS),
+                        что
+                        обеспечивает безопасную обработку реквизитов Банковской карты Держателя. Применяемая технология
+                        передачи данных гарантирует безопасность по сделкам с Банковскими картами путем использования
+                        протоколов Secure Sockets Layer (SSL), Verified by Visa, Secure Code, и закрытых банковских
+                        сетей,
+                        имеющих высшую степень защиты.
+                    </p>
+
+                    <p>
+                        В случае возврата, денежные средства возвращаются на ту же карту, с которой производилась
+                        оплата.
+                    </p>
+
+                    <p>
+                        При оплате заказа банковской картой возврат денежных средств производится на ту карту, с которой
+                        был
+                        произведен платеж.
+                    </p>
+
+                    <div class="d-flex col-9 ml-auto mr-auto ">
+                        <div class="p-2 flex-fill bd-highlight">
+                            <img class="rounded card-img-top" src="{% static "logos.png" %}">
+                        </div>
+                    </div>
+
+                    <div class="d-flex col-9 align-items-center ml-auto mr-auto bd-highlight">
+                        <div class="p-2 flex-fill bd-highlight">
+                            <img class="rounded card-img-top" src="{% static "mir.jpg" %}">
+                        </div>
+                        <div class="p-2 flex-fill bd-highlight">
+                            <img class="rounded card-img-top" src="{% static "MasterCard_SecureCode.bmp" %}">
+                        </div>
+
+                        <div class="p-2 flex-fill bd-highlight">
+                            <img class="rounded card-img-top" src="{% static "Verfied_by_VISA.bmp" %}">
+                        </div>
+
+                    </div>
+
+                    <div class="section__header">Способы доставки</div>
+
+
+                    <div class="d-flex col-9 align-items-center ml-auto mr-auto bd-highlight">
+                        <div class="p-2 flex-fill bd-highlight">
+                            <img class="rounded card-img-top" src="{% static "prf.png" %}">
+                        </div>
+                        <div class="p-2 flex-fill bd-highlight">
+                            <img class="rounded card-img-top" src="{% static "sdek.png" %}">
+                        </div>
+
+                    </div>
+
+                    <p>После получения покупки внимательно осмотрите целостность упаковки и внешний вид вещей. Товар
+                        должен
+                        полностью соответствовать описанию на сайте и выбранному размеру.</p>
+                    <p>Если модель не подошла или имеет производственный брак, её можно вернуть, при условии сохранения
+                        товарного вида, фабричных ярлыков и документов, подтверждающих оплату.</p>
+                    <p>Оформление возврата производится через <a class="custom_a" style="color: #fd0e7f;opacity: 1 !important;" href="{% url 'return' %}">специальную форму</a>.
+                    </p>
+                    <p>Возврат товара производится Почтой на адрес: ИП Крюков Александр Евгеньевич 440061, г. Пенза, ул.
+                        Толстого, д. 6, кв. 36, с пометкой — «До востребования».</p>
+                </div>
+
+                <div class="col-lg-6 d-lg-flex d-none delivery_img">
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+

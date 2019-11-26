@@ -1,0 +1,335 @@
+{% load static %}
+{% load math_pr %}
+
+
+
+
+{% for product in products %}
+
+    <div class="product_content col-6  {{ col5 }}  col-lg-3 col-sm-6 col-md-4">
+        <a href="{{ product.get_absolute_url }}">
+            <div class="product">
+                <div class="product__head">
+
+                    <div id="carousel{{ product.id }}" data-wrap="false" data-interval="false"
+                         class="product_carousel carousel slide" data-ride="carousel">
+
+                        <div class="carousel-inner">
+
+                            {% if  product.product_photo.all.count == 0 %}
+
+
+                                <div class="carousel-item active">
+                                    <div class="img_container">
+                                        <img {% if forloop.counter <= 4 %} src="{{ product.image_default.url }}"
+                                        {% else %} data-src="{{ product.image_default.url }}"  {% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="carousel-caption py-2 d-flex flex-column justify-content-center">
+                                    <ol class="carousel-indicators my-0">
+                                        <li data-target="#carousel{{ product.id }}" data-slide-to="0"
+                                            class="active"></li>
+                                    </ol>
+                                </div>
+
+                            {% else %}
+                                {% for photo in product.product_photo.all %}
+
+                                    {% if forloop.counter0 < 3 %}
+
+                                        {% if forloop.counter0 == 0 %}
+
+                                            <div class="carousel-item active">
+                                                <div class="img_container">
+                                                    <img {% if forloop.parentloop.counter <= 4 %}
+                                                        src="{{ photo.get_pre_photo }}"
+                                                    {% else %} data-src="{{ photo.get_pre_photo }}"  {% endif %}>
+                                                </div>
+                                            </div>
+                                        {% else %}
+
+                                            <div class="carousel-item">
+                                                <div class="img_container">
+                                                    <img {% if forloop.parentloop.counter <= 4 %}
+                                                        src="{{ photo.get_pre_photo }}"
+                                                    {% else %} data-src="{{ photo.get_pre_photo }}"  {% endif %}>
+                                                </div>
+                                            </div>
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                <div class="carousel-caption py-2 d-flex flex-column justify-content-center">
+                                    <ol class="carousel-indicators my-0">
+
+                                        {% for photo in product.product_photo.all %}
+
+                                            {% if forloop.counter0 < 3 %}
+
+                                                {% if forloop.counter0 == 0 %}
+
+                                                    <li data-target="#carousel{{ product.id }}"
+                                                        data-slide-to="{{ forloop.counter0 }}"
+                                                        class="active"></li>
+
+                                                {% else %}
+
+                                                    <li data-target="#carousel{{ product.id }}"
+                                                        data-slide-to="{{ forloop.counter0 }}"
+                                                    ></li>
+
+                                                {% endif %}
+
+                                            {% endif %}
+
+                                        {% endfor %}
+
+                                    </ol>
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        <a class="d-flex justify-content-start carousel-control-prev"
+                           href="#carousel{{ product.id }}" role="button"
+                           data-slide="prev">
+                            <span class="icon__prev">
+                              <i class="fas fa-angle-left"></i>
+                            </span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+
+                        <a class="d-flex justify-content-end carousel-control-next"
+                           href="#carousel{{ product.id }}"
+                           role="button"
+                           data-slide="next">
+                            <span class="icon__next">
+                              <i class="fas fa-angle-right"></i>
+                            </span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+
+                    <div class="ribbon"><span>Уже на 10% дешевле!</span></div>
+
+                    <div class="d-flex flex-column product__marker__container">
+
+
+                        <div class="product__marker__sale">
+                            10
+                        </div>
+
+                        <div class="product__marker__new">
+                            NEW
+                        </div>
+
+                        <div class="product__marker__hit">
+                            HIT
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="product__body">
+
+                    <div class="product__body__rl d-flex justify-content-between">
+                        <div class=" d-flex align-self-center justify-content-center">
+
+                            {% if request.user.is_authenticated %}
+
+                                <i favorite_product_btn_id="{{ product.id }}"
+                                   class="favorite_product_add_remove fas fa-star fa-2x pr-2  star_color"></i>
+
+                                {% if product in request.user.profile.favorite_products.all %}
+                                    <script> favorite_product('{{ product.id }}', true);</script>
+                                {% else %}
+                                    <script> favorite_product('{{ product.id }}', false);</script>
+                                {% endif %}
+
+                                <i likely_product_btn_id="{{ product.id }}"
+                                   class="likely_product_add_remove fas fa-heart fa-2x pr-2 like_color"></i>
+
+                                {% if product in request.user.profile.likely_products.all %}
+                                    <script> likely_product('{{ product.id }}', true, {{ product.like }});</script>
+                                {% else %}
+                                    <script> likely_product('{{ product.id }}', false, {{ product.like }});</script>
+                                {% endif %}
+
+                            {% endif %}
+
+
+                        </div>
+
+                        <div class="flex-shrink-0">
+                            <div class="d-flex justify-content-end align-items-center">
+                                <div class="">
+                                    <select state="nothink" rating="{{ product.rating }}"
+                                            product="{{ product.id }}"
+                                            class="product_rating">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+
+                                <div class="pt-1">
+                                    <h6 class="product__rating__count"
+                                        product="{{ product.id }}">({{ product.rating_count }})</h6>
+                                </div>
+
+                                <div class="pt-1 pl-1">
+                                    <h6 class="product__rating__text"
+                                        product="{{ product.id }}">  {{ product.rating }} </h6>
+                                </div>
+
+                                <script>
+                                    {% if request.user.is_authenticated %}
+                                        {% if product in request.user.profile.rating_products.all %}
+                                            product_rating_show({{ product.id }}, true);
+                                        {% else %}
+                                            product_rating_show({{ product.id }}, false);
+                                        {% endif %}
+                                    {% else %}
+                                        product_rating_show({{ product.id }}, true);
+                                    {% endif %}
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{{ product.get_absolute_url }}">
+                        <div class="product__body__name w-100 text-break h-25 overflow-hidden">
+                            {{ product.name }}
+                        </div>
+
+
+                        <div class="d-flex justify-content-end product__body__price w-100">
+                            {{ product.price }}
+                        </div>
+
+
+                        <div class="d-flex justify-content-end product__body__price__sale w-100 ">
+
+                            {% if product.sale > 0 %}
+
+                                <div class="old_price">{{ product.base_price }}</div>
+
+                                <div class="ml-2 procent_off">{{ product.sale }}</div>
+
+                            {% else %}
+                                <div class="old_price">{{ product.price|procent_off:10 }}</div>
+
+                                <div class="ml-2 procent_off">10</div>
+                            {% endif %}
+
+                            <div class="ml-auto product__body__price__sale__available"></div>
+
+                        </div>
+                    </a>
+
+                </div>
+
+                <div class="product__footer d-flex flex-column justify-content-end">
+
+                    {% if product.size.count == 0 %}
+
+                        <button class="notification_btn w-100 btn__custom__inverse "
+                                size_id='{{ size.id }}'
+                                type="notify_product"
+                                product_id='{{ product.id }}'>Узнать когда появится
+                        </button>
+                    {% else %}
+
+                        <div class="sizes" id="sizes__{{ product.id }}">
+                            <ul class=" nav nav-pills mb-sm-3" id="pills-tab" role="tablist">
+                                {% for size in product.size.all %}
+                                    <li class="nav-item">
+                                        <a class="nav-link {% if forloop.counter == 1 %} active {% endif %}
+{% if size.size == 'Без размера' %} d-none {% endif %}
+"
+                                           data-toggle="pill" href="#tab_size{{ size.id }}"
+                                           role="tab" aria-controls="pills-home"
+                                           aria-selected="true">{{ size.size }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <div class="tab-content" id="pills-tabContent">
+                            {% for size in product.size.all %}
+                                <div class="tab-pane fade {% if forloop.counter == 1 %} show active {% endif %}  "
+                                     id="tab_size{{ size.id }}" role="tabpanel"
+                                     aria-labelledby="pills-home-tab">
+
+                                    {% if  size.count > 0 %}
+
+                                        <button class="add_to_cart w-100 btn__custom__inverse "
+                                                size_id='{{ size.id }}'
+                                                product_id='{{ product.id }}'>Добавить в корзину
+                                        </button>
+
+
+                                    {% else %}
+
+                                        <button class="notification_btn w-100 btn__custom__inverse "
+                                                type="notify_size"
+                                                size_id='{{ size.id }}'
+                                                product_id='{{ product.id }}'>Узнать когда появится
+                                        </button>
+
+                                    {% endif %}
+
+
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+                </div>
+
+            </div>
+        </a>
+    </div>
+
+{% endfor %}
+
+
+<script>
+    product_rating();
+
+    $('.sizes').mCustomScrollbar({
+        theme: "minimal-dark",
+        axis: "x",
+        advanced: {
+            autoExpandHorizontalScroll: 2
+        },
+        callbacks: {
+            onCreate: function () {
+                $(this).find("p").css("width", $(this).width());
+            },
+            onBeforeUpdate: function () {
+                $(this).find("p").css("width", $(this).width());
+            }
+        }
+    });
+
+    $('.carousel').carousel();
+
+
+    $('.carousel').on('slide.bs.carousel', function (e) {
+        $(e.currentTarget).lazyLoadXT();
+    });
+    $(window).resize();
+    $(window).lazyLoadXT();
+
+</script>
+
+

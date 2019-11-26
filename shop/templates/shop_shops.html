@@ -1,0 +1,85 @@
+<div class="row">
+    {% for shop in all_shop %}
+
+        <a style="color: inherit" href="{{ shop.get_absolute_url }}" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <div class=" services-wrapper">
+                <img class="rounded card-img-top"
+                     src="{{ shop.main_photo.url }}">
+                <div class="caption">
+
+                    <ul class="list-inline d-flex">
+
+                        <li class="d-flex">
+                            <h3><strong>  {{ shop.name }}
+                            </strong>
+                            </h3>
+                        </li>
+
+
+                        <li class="d-flex">
+                            <select theme="css-stars2" state="nothink" rating="{{ shop.rating }}" shop="{{ shop.id }}"
+                                    class="shop_rating">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </li>
+
+                        <li class="d-flex">
+                            <h6 class="shop_rating_text"
+                                shop="{{ shop.id }}">  {{ shop.rating }} </h6>
+                        </li>
+
+                        <script>
+                            {% if request.user.is_authenticated %}
+                                {% if shop in request.user.profile.rating_shops.all %}
+                                    shop_rating_show({{ shop.id }}, true);
+                                {% else %}
+                                    shop_rating_show({{ shop.id }}, false);
+                                {% endif %}
+                            {% else %}
+                                shop_rating_show({{ shop.id }}, true);
+                            {% endif %}
+                        </script>
+
+                    </ul>
+
+                    <p> {{ shop.description }} </p>
+
+
+                    {% if request.user.is_authenticated %}
+
+                        <p class='text-right'>
+
+
+                            <button favorite_shop_btn_id="{{ shop.id }}"
+                                    class='favorite_shop_add_remove btn btn-danger'></button>
+
+                            {% if shop in request.user.profile.favorite_shops.all %}
+                                <script> favorite_shops('{{ shop.id }}', true);</script>
+                            {% else %}
+                                <script> favorite_shops('{{ shop.id }}', false);</script>
+                            {% endif %}
+
+                            <br>
+
+                            <button likely_shop_btn_id="{{ shop.id }}"
+                                    class='likely_shop_add_remove btn btn-danger'></button>
+
+                            {% if shop in request.user.profile.likely_shops.all %}
+                                <script> likely_shops('{{ shop.id }}', true, {{ shop.like }});</script>
+                            {% else %}
+                                <script> likely_shops('{{ shop.id }}', false, {{ shop.like }});</script>
+                            {% endif %}
+
+                        </p>
+                    {% endif %}
+
+                </div>
+            </div>
+        </a>
+
+    {% endfor %}
+</div>

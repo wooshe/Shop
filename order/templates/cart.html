@@ -1,0 +1,494 @@
+{% extends 'script.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Bona Fide Sale - Корзина{% endblock title %}
+
+{% block scr %}
+
+    <script>
+
+        function update_min_max_date() {
+            if (parseInt($('#delivery_price').html()) == 0) {
+                $('.delivery_date').css('display', 'none');
+            } else
+                $('.delivery_date').css('display', 'flex');
+        }
+
+        function update_delivery_cart_price() {
+            var pricea = $('#cart_price_all').html();
+            var delivery = $('#delivery_price').html();
+
+            delivery = delivery.replace(",", ".");
+
+            var all = parseFloat(pricea) + parseFloat(delivery);
+
+
+            $('#delivery_and_cart_price').html(parseFloat(all).toFixed(2));
+        };
+
+        function update_price_all(price) {
+            $('#cart_price_all').html(parseFloat(price).toFixed(2));
+            update_delivery_cart_price();
+
+        };
+
+
+        (function ($) {
+            $.fn.spinner = function () {
+                this.each(function () {
+                    var el = $(this);
+
+// add elements
+                    el.wrap('<span class="spinner"></span>');
+                    el.before('<span class="sub">-</span>');
+                    el.after('<span class="add">+</span>');
+
+// substract
+                    el.parent().on('click', '.sub', function () {
+                        if (el.val() > parseInt(el.attr('min')))
+                            el.val(function (i, oldval) {
+                                return --oldval;
+                            });
+                    });
+
+// increment
+                    el.parent().on('click', '.add', function () {
+                        if (el.val() < parseInt(el.attr('max')))
+                            el.val(function (i, oldval) {
+                                return ++oldval;
+                            });
+                    });
+                });
+            };
+        })(jQuery);
+
+        $('input[type=number]').spinner();
+
+
+        $(document).ready(function () {
+
+
+            $("input[type='number']").InputSpinner();
+
+            update_min_max_date();
+
+            $(document).on('click', '#order', function (e) {
+                e.preventDefault();
+                data = $('#address_form').serialize();
+
+
+                sale_code = $('#form_sale').val();
+                data += "&sale_code=" + sale_code;
+
+                data += "&method=check_form";
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "to_order" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#address_form').replaceWith(data['address_change_form_response']);
+                            $('#order_body').empty();
+                            $('#order_body').append(data['order_body_response']);
+                            $('#modal_order').modal('show');
+                        } else if (data['result'] == 'error') {
+                            $('#address_form').replaceWith(data['address_change_form_response']);
+                        }
+                    }
+                })
+            });
+
+            $(document).on('click', '#id_country ~ .suggestions-wrapper .suggestions-suggestions, #id_region ~ .suggestions-wrapper .suggestions-suggestions, #id_area ~ .suggestions-wrapper .suggestions-suggestions, #id_city ~ .suggestions-wrapper .suggestions-suggestions, #id_street ~ .suggestions-wrapper .suggestions-suggestions, #id_house ~ .suggestions-wrapper .suggestions-suggestions, #id_index ~ .suggestions-wrapper .suggestions-suggestions', function (e) {
+                e.preventDefault();
+                data = $('#address_form').serialize();
+                data += "&method=calc";
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "to_order" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#delivery_price').html(parseFloat(data['delivery_total']).toFixed(2));
+                        } else if (data['result'] == 'error') {
+                            $('#delivery_price').html(parseFloat(data['delivery_total']).toFixed(2));
+                        }
+
+                        update_delivery_cart_price();
+                        update_min_max_date();
+                    }
+                })
+            });
+
+
+            $(document).on('input', '#id_country, #id_region, #id_area, #id_city, #id_street, #id_house, #id_index', function (e) {
+                e.preventDefault();
+                data = $('#address_form').serialize();
+                data += "&method=calc";
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "to_order" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#delivery_price').html(parseFloat(data['delivery_total']).toFixed(2));
+                        } else if (data['result'] == 'error') {
+                            $('#delivery_price').html(parseFloat(data['delivery_total']).toFixed(2));
+                        }
+
+                        update_delivery_cart_price();
+                        update_min_max_date();
+                    }
+                })
+            });
+
+
+            $(document).on('input', '#form_sale', function (e) {
+                e.preventDefault();
+                sale_code = $('#form_sale').val();
+                data = "&method=check_sale&sale_code=" + sale_code;
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "to_order" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#sale').html(data['sale']);
+
+
+                        } else if (data['result'] == 'error') {
+                            $('#sale').html(data['sale']);
+                        }
+                    }
+                })
+            });
+
+
+            $(document).on('change', '#id_country, #id_region, #id_area, #id_city, #id_street, #id_house, #id_index', function (e) {
+                e.preventDefault();
+                data = $('#address_form').serialize();
+                data += "&method=calc";
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "to_order" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#delivery_price').html(parseFloat(data['delivery_total']).toFixed(2));
+                        } else if (data['result'] == 'error') {
+                            $('#delivery_price').html(parseFloat(data['delivery_total']).toFixed(2));
+                        }
+
+                        update_delivery_cart_price();
+                        update_min_max_date();
+                    }
+                })
+            });
+
+
+            $(document).on('click', '#order_confirm', function (e) {
+                e.preventDefault();
+                $(this).prop('disabled', true);
+                data = $('#address_form').serialize();
+                data += "&method=order_confirm";
+                sale_code = $('#form_sale').val();
+                data += "&sale_code=" + sale_code;
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "to_order" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            window.location.href = data['url'];
+                            message_close();
+                        } else if (data['result'] == 'error') {
+
+                            if (data['message_act'] == 'true') {
+                                message_close();
+                                message(data['message']);
+                            }
+
+                            $('#modal_order').modal('hide');
+                            $(this).prop('disabled', false);
+                        }
+                    }
+                })
+            });
+
+
+            $(".change_item_count").change(function () {
+                if ($(this).val() > 0) {
+                    count = $(this).val();
+                    item_id = $(this).attr('item_id');
+                    size_id = $(this).attr('size_id');
+                    data = {
+                        item_id: item_id,
+                        size_id: size_id,
+                        count: count
+                    };
+                    $.ajax({
+                        type: "GET",
+                        url: '{% url "change_item_count" %}',
+                        data: data,
+                        success: function (data) {
+                            var price = "#cart_item_price_all" + item_id + size_id;
+                            $(price).html(parseFloat(data.cart_item_price_all).toFixed(2));
+                            update_price_all(data.cart_price_all);
+                        }
+                    })
+                }
+            });
+
+            $('.remove_all_from_cart').on('click', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "remove_all_from_cart" %}',
+                    success: function (data) {
+                        $('.cart-empty').css('display', 'flex');
+                        $('.content').empty();
+                        $('.content').css('display', 'none');
+                    }
+                })
+            });
+
+            $('.remove_from_cart').on('click', function (e) {
+                e.preventDefault()
+                product_id = $(this).attr('product_id');
+                size_id = $(this).attr('size_id');
+                data = {
+                    product_id: product_id,
+                    size_id: size_id
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "remove_from_cart" %}',
+                    data: data,
+                    success: function (data) {
+                        var container = "#container_" + product_id + size_id;
+
+                        if (data.cart_price_all == 0) {
+                            $('.cart-empty').css('display', 'flex');
+                            $('.content').empty();
+                            $('.content').css('display', 'none');
+                        } else {
+                            $('.header__count').html(parseFloat(data.cart_count).toFixed(0));
+                            $(container).empty();
+                            $(container).css('display', 'none');
+                            update_price_all(data.cart_price_all);
+                        }
+                    }
+                })
+            });
+        });
+    </script>
+
+{% endblock scr %}
+
+{% block header_cart %}
+    header_cart
+{% endblock header_cart %}
+
+{% block navbar_cart %}
+
+{% endblock navbar_cart %}
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+{% block content %}
+
+    <section>
+        <div class="cart__section container-fluid">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+                <div class="row px-0 px-lg-3 col-12 mx-0 d-flex justify-content-center">
+                    {% if cart.items.count == 0 %}
+                        <div class="cart-empty mt-5 d-flex flex-column align-items-center justify-content-center">
+                            <div class="section__header">Ваша корзина пуста</div>
+                            <a href="{% url 'catalog' %}">
+                                <button class="btn__custom"> Перейти в каталог</button>
+                            </a>
+                        </div>
+                    {% else %}
+
+                        <div style="display: none"
+                             class="cart-empty mt-5 flex-column align-items-center justify-content-center">
+                            <div class="section__header">Ваша корзина пуста</div>
+                            <a href="{% url 'catalog' %}">
+                                <button class="btn__custom"> Перейти в каталог</button>
+                            </a>
+                        </div>
+
+                        <div class="content col-12 px-0">
+                            <div class="px-0 col-12"
+                                 style="position: sticky; top: 0px; z-index: 998; background: white;">
+                                <div class="d-flex flex-column align-items-start pt-4 pb-2 justify-content-center">
+
+                                    <div class="header__title w-100">Оформление заказа</div>
+
+                                    <div class="d-flex  w-100 align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center justify-content-start">
+                                            <div class="header__text mr-2">
+                                                Товаров:
+                                            </div>
+                                            <div class="header__count mr-2">
+                                                {{ cart.items.count }}
+                                            </div>
+                                            <div class="header__text mr-2">
+                                                на сумму:
+                                            </div>
+                                            <div id='cart_price_all' class="header__price mr-2">
+                                                {{ cart.price_all }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex  w-100 align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center justify-content-start">
+                                            <div class="header__text mr-2">
+                                                Доставка:
+                                            </div>
+                                            <div id='delivery_price' class="header__price mr-2">
+                                                {{ delivery_price }}
+                                            </div>
+
+
+                                            <div class="header__text mr-2 delivery_date">
+                                                от
+                                            </div>
+                                            <div id='delivery_min_day' style="color:#fd0e7f;"
+                                                 class="delivery_date header__text mr-2">
+                                                {{ delivery_min_day }}
+                                            </div>
+                                            <div class="header__text mr-2 delivery_date">
+                                                до
+                                            </div>
+                                            <div id='delivery_max_day' style="color:#fd0e7f;"
+                                                 class="delivery_date header__text mr-2">
+                                                {{ delivery_max_day }}
+                                            </div>
+
+                                            <div class="header__text mr-2 delivery_date">
+                                                дней
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="d-flex  w-100 align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center justify-content-start">
+                                            <div class="header__text mr-2">
+                                                Промокод:
+                                            </div>
+
+                                            <div class="mr-2 col-6">
+                                                <div class="form-group mb-0">
+                                                    <input type="text" class="form-control" id="form_sale"
+                                                           placeholder="Промокод">
+                                                </div>
+                                            </div>
+
+                                            <div id='sale' style="color:#fd0e7f;"
+                                                 class="delivery_date header__text mr-2">
+                                                0
+                                            </div>
+
+                                            <div style="color:#fd0e7f;"
+                                                 class="delivery_date header__text">
+                                                %
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex  w-100 align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center justify-content-start">
+                                            <div class="header__text mr-2">
+                                                Итого:
+                                            </div>
+                                            <div id='delivery_and_cart_price' class="header__price mr-2">
+                                                {{ delivery_and_cart_price }}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <button id="order" class='btn__custom'>Заказать</button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <button class='remove_all_from_cart btn__custom__inverse'>Очистить</button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row mt-4 col-12 px-0 mx-0">
+                                <div class="col-12 col-lg-7">
+                                    <div class="row d-flex justify-content-center">
+                                        {% include 'cart_products.html' with products=cart.items.all %}
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 col-lg-5">
+                                    {% include 'address_change.html' %}
+                                </div>
+
+                                <div class="col-12 mt-4 d-flex justify-content-center">
+                                    <button id="order" class='btn__custom'>Заказать</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal_order" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение заказа!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    <div id="order_body">
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block contact %}
+
+{% endblock contact %}

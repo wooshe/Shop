@@ -1,0 +1,18 @@
+{% load bootstrap4 %}
+
+<form class="notification_form_size" size_id='{{ size_id }}'
+      type="{{ type }}"
+      product_id='{{ product_id }}'>
+    {% csrf_token %}
+    {% bootstrap_form notification_form required_css_class='not_message' show_help=False %}
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        <button type="notify_size" noty_kind="noty_size" class="submit_noty btn__custom__inverse">Подписаться о
+            поступлении выбранного размера
+        </button>
+        <button type="notify_size" noty_kind="noty_product" class="mt-3 submit_noty btn__custom__inverse">Подписаться о
+            поступлении товара
+        </button>
+    </div>
+</form>
+
+

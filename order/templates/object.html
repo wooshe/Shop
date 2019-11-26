@@ -1,0 +1,138 @@
+<div class="product_content order col-6  {{ col5 }}  col-lg-3 col-sm-6 col-md-4" id="{{ order.id }}"
+     style="cursor: pointer">
+    <div class="product">
+        <div class="d-flex flex-column align-items-center">
+            <div class=" w-100 d-flex justify-content-end" style="font-weight: 600;">
+                Заказ №{{ order.id }}
+            </div>
+
+            <div class=" w-100 order_date d-flex justify-content-end">
+                {{ order.date }}
+            </div>
+
+            <div class="w-100">
+                <hr>
+            </div>
+
+            <div class="d-flex w-100 justify-content-between  order_min_head">
+                <div class="number">
+                    №
+                </div>
+                <div class="name">
+                    Название
+                </div>
+                <div class="count">
+                    Кол-во
+                </div>
+                <div class="price">
+                    Сумма
+                </div>
+            </div>
+            <div class="d-flex w-100 order_min_container flex-column">
+                {% for item in order.items.all %}
+
+                    <a href="{{ item.archive_product_url }}">
+                        <div class="d-flex w-100 order_min justify-content-between">
+                            <div class="number">
+                                {{ forloop.counter }}
+                            </div>
+                            <div class="name">
+                                {{ item.archive_product_name }}
+                            </div>
+                            <div class="count">
+                                {{ item.archive_count }}
+                            </div>
+                            <div class="price">
+                                {{ item.archive_price_all }}
+                            </div>
+                        </div>
+                    </a>
+
+                {% endfor %}
+            </div>
+
+            <div class="d-flex w-100 order_footer flex-column">
+
+                <div class="d-flex w-100 ">
+
+                    <div class="d-flex flex-grow-1 order_desc_head justify-content-start">
+                        Сумма:
+                    </div>
+
+                    <div class="d-flex flex-grow-1 order_desc_content justify-content-end">
+                        {{ order.price_all }}
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex w-100 ">
+
+                    <div class="d-flex flex-grow-1 order_desc_head justify-content-start">
+                        Доставка:
+                    </div>
+
+                    <div class="d-flex flex-grow-1 order_desc_content justify-content-end">
+                        {{ order.delivery_price }}
+                    </div>
+
+                </div>
+
+                <div class="d-flex w-100 ">
+
+                    <div class="d-flex flex-grow-1 order_desc_head justify-content-start">
+                        Итого:
+                    </div>
+
+                    <div class="d-flex flex-grow-1 order_desc_content justify-content-end">
+                        {{ order.delivery_cart_price }}
+                    </div>
+
+                </div>
+
+                <div class="d-flex w-100 ">
+
+                    <div class="d-flex flex-grow-1 order_desc_head justify-content-start">
+                        Трек-номер:
+                    </div>
+
+                    <div class="d-flex flex-grow-1 order_desc_content justify-content-end">
+                        {{ order.pr_barcode }}
+                    </div>
+
+                </div>
+
+                <div class="d-flex w-100 ">
+
+                    <div class="d-flex flex-grow-1 order_desc_head justify-content-start">
+                        Статус:
+                    </div>
+
+                    <div class="d-flex flex-grow-1 order_desc_content justify-content-end">
+                        {{ order.get_status_display }}
+                    </div>
+
+                </div>
+
+                {% if order.pr_barcode != None %}
+                    <button hr="https://www.pochta.ru/tracking#{{ order.pr_barcode }}" class="order_track btn__custom__inverse mt-2 align-self-center w-75"> Отследить</button>
+                {% endif %}
+                {% if order.send_confirm == False %}
+                    <button id="{{ order.id }}"
+                            class="order_confirm_delivery btn__custom__inverse mt-2 align-self-center w-75"> Подтвердить
+                        доставку
+                    </button>
+                {% else %}
+                    <div class=' w-100 mt-3 d-flex order_desc_head justify-content-center' style='color: gray'>
+                        Доставка подтверждена
+                    </div>
+                {% endif %}
+
+                <div class=" w-100 mt-3 d-flex order_desc_head justify-content-center" style="color: gray">
+                    Подробнее
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,134 @@
+{% load mptt_tags %}
+{% load bootstrap4 %}
+{#{% bootstrap_css %}#}
+{% load static %}
+<link href="{% static "css/suggestions.min.css" %}" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@19.4.1/dist/js/jquery.suggestions.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        function showPostalCode(suggestion) {
+            $("#id_index").val(suggestion.data.postal_code);
+        }
+
+        function clearPostalCode() {
+            $("#id_index").val("");
+        }
+
+        var
+            token = "47d7d7e598f04af6db6ef1ad5f0b2460d8b1bc97",
+            type = "ADDRESS",
+            $region = $("#id_region"),
+            $area = $("#id_area"),
+            $city = $("#id_city"),
+            $street = $("#id_street");
+
+        // регион
+        $region.suggestions({
+            token: token,
+            type: type,
+            hint: false,
+            mobileWidth: "10",
+            bounds: "region",
+        });
+
+        // район
+        $area.suggestions({
+            token: token,
+            type: type,
+            hint: false,
+            bounds: "area",
+            mobileWidth: "10",
+            constraints: $region
+        });
+
+        // город и населенный пункт
+        $city.suggestions({
+            token: token,
+            type: type,
+            hint: false,
+            bounds: "city-settlement",
+            mobileWidth: "10",
+            constraints: $area,
+            onSelect: showPostalCode,
+            onSelectNothing: clearPostalCode
+        });
+
+        // улица
+        $street.suggestions({
+            token: token,
+            type: type,
+            hint: false,
+            bounds: "street",
+            mobileWidth: "10",
+            constraints: $city
+        });
+    });
+</script>
+
+
+<form id="address_form">
+    {% csrf_token %}
+
+    <div class="form-row">
+        <div class="col">
+            {% bootstrap_field address_form.name required_css_class='not_message' show_help=False %}
+        </div>
+        <div class="col">
+            {% bootstrap_field address_form.surname required_css_class='not_message' show_help=False %}
+        </div>
+    </div>
+
+    {% bootstrap_field address_form.fathername required_css_class='not_message' show_help=False %}
+
+    <div class="form-row">
+        <div class="col">
+            {% bootstrap_field address_form.phone required_css_class='not_message' show_help=False %}
+        </div>
+        <div class="col">
+            {% bootstrap_field address_form.email required_css_class='not_message' show_help=False %}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col">
+            {% bootstrap_field address_form.country required_css_class='not_message' show_help=False %}
+        </div>
+        <div class="col">
+            {% bootstrap_field address_form.region required_css_class='not_message' show_help=False %}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col">
+            {% bootstrap_field address_form.area required_css_class='not_message' show_help=False %}
+        </div>
+        <div class="col">
+            {% bootstrap_field address_form.city required_css_class='not_message' show_help=False %}
+        </div>
+    </div>
+
+    {% bootstrap_field address_form.street required_css_class='not_message' show_help=False %}
+
+    <div class="form-row">
+        <div class="col">
+            {% bootstrap_field address_form.index required_css_class='not_message' show_help=False %}
+        </div>
+        <div class="col">
+            {% bootstrap_field address_form.house required_css_class='not_message' show_help=False %}
+        </div>
+        <div class="col">
+            {% bootstrap_field address_form.room required_css_class='not_message' show_help=False %}
+        </div>
+    </div>
+
+
+
+    {% if with_save == "true" %}
+        <button type="submit" class="mt-2 btn__custom__inverse">Сохранить</button>
+    {% endif %}
+</form>
+
+

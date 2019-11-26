@@ -1,0 +1,343 @@
+{% extends 'script.html' %}
+
+{% block title %}Bona Fide Sale - Личный кабинет{% endblock title %}
+
+{% block scr %}
+    {% load bootstrap4 %}
+    {#    {% bootstrap_css %}#}
+    <script>
+        $(document).ready(function () {
+
+            $(document).on('click', '.order_confirm_delivery', function (e) {
+                e.stopPropagation();
+                order_id = $(this).attr('id');
+                btn = $(this);
+
+                data = {
+                    order_id: order_id,
+                    method: "order_confirm_delivery"
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "profile" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+                            btn.replaceWith("                    <div class=' w-100 mt-3 d-flex order_desc_head justify-content-center' style='color: gray'>\n" +
+                                "                        Доставка подтверждена\n" +
+                                "                    </div>");
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', '.order_track', function (e) {
+                e.stopPropagation();
+                hr = $(this).attr('hr');
+                window.open(hr, '_blank ');
+            });
+
+            $(document).on('click', '.order', function (e) {
+                e.preventDefault();
+                order_id = $(this).attr('id');
+
+                data = {
+                    order_id: order_id,
+                    method: "get_order"
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "profile" %}',
+                    data: data,
+                    success: function (data) {
+
+                        if (data['result'] == 'success') {
+
+                            $('#modal_order_desc .modal-body').empty();
+                            $('#modal_order_desc .modal-body').append(data['order_response']);
+                            $('#modal_order_desc').modal('show');
+                        } else if (data['result'] == 'error') {
+
+                        }
+                    }
+                });
+            });
+
+            var sp = '{{ success_pay}}';
+
+            if (sp == 'True') {
+                var ru = '{{ redirect_url }}'
+                window.location.href = ru;
+            }
+
+
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var socket_url = ws_scheme + '://' + window.location.host + "/ws/order_socket/";
+
+            console.log(socket_url)
+
+            var socket = new WebSocket(socket_url)
+
+            socket.onmessage = function (event) {
+                console.log('cart onmessage: ', event)
+
+                var data = JSON.parse(event.data);
+                var mes = data['message']
+
+                var command = mes['command']
+
+                if (command == "alarm") {
+                    var item_event = mes['event']
+                    var order_id = mes['order_id']
+
+                    if (item_event == "new_item") {
+                        $('#insert').append(mes['order_model'])
+                    } else if (item_event == "select_status_change") {
+                        $('#container_' + order_id).replaceWith(mes['order_model'])
+
+                    }
+                }
+
+
+                sound_alarm()
+
+            };
+
+
+            socket.onopen = function (event) {
+                console.log('cart onopen: ', event)
+                user_id = $('#about_page').attr("user_id");
+                socket.send(JSON.stringify({
+                    "command": "join",
+                    "user_id": user_id
+                }));
+            };
+
+            socket.onclose = function (event) {
+                console.log('cart closed: ', event)
+            };
+
+            $(document).on('show.bs.modal', '#modal_password_change', function (e) {
+                $('#password_change_form').trigger('reset');
+            });
+
+            $(document).on('submit', '#user_form', function (e) {
+                e.preventDefault();
+                data = $(this).serialize();
+                data += "&type_post=user_form";
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "profile" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#user_form').replaceWith(data['user_change_form_response'])
+                            message(data['message']);
+                        } else if (data['result'] == 'error') {
+                            $('#user_form').replaceWith(data['user_change_form_response'])
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', '#password_change_form', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "password_change"%}',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#modal_password_change').modal('hide');
+                            message(data['message']);
+                        } else if (data['result'] == 'error') {
+                            $('#password_change_form').replaceWith(data['response'])
+                        }
+                    }
+                })
+            })
+
+        });
+    </script>
+
+{% endblock scr %}
+
+
+{% block header_cart %}
+    header_cart
+{% endblock header_cart %}
+
+{% block navbar_cart %}
+
+{% endblock navbar_cart %}
+
+{% block sidebar_button %}
+    <button type="button" id="sidebarCollapse" class="mc btn__custom">
+        <i class="fas fa-align-left"></i>
+        <span>Меню</span>
+    </button>
+{% endblock sidebar_button %}
+
+
+{% block content %}
+    <div id="about_page" user_id="{{ request.user.id }}"></div>
+
+    <section>
+        <div class="profile__section container-fluid">
+            <div class="row">
+                {% include 'sidebar.html' with class_m="mc" ovr='mc' filter_shop_display='none' %}
+
+                <div class="row px-0 px-lg-3 col-12 mx-0 d-flex justify-content-center">
+
+                    <div class="content col-12 px-0">
+                        <div class="px-0 col-12"
+                             style="position: sticky; top: 0px; z-index: 998; background: white;">
+                            <div class="nav nav nav-pills justify-content-center justify-content-lg-around pt-4 pb-2 nav-pills"
+                                 id="menu"
+                                 role="tablist"
+                                 aria-orientation="vertical">
+
+
+                                <a class="nav-link text-center ml-2 active" data-toggle="pill"
+                                   href="#menu_order">Заказы</a>
+                                <a class="nav-link text-center ml-2" data-toggle="pill" href="#menu_favorite_products">Избранные
+                                    товары</a>
+                                <a class="nav-link text-center ml-2" data-toggle="pill" href="#menu_likely_products">Понравившиеся
+                                    товары</a>
+                                <a class="nav-link text-center ml-2" data-toggle="pill" href="#menu_other">Общие</a>
+
+                            </div>
+                            <hr>
+                        </div>
+
+                        <div class="row mt-4 col-12 px-0 mx-0">
+                            <div class="col-12">
+
+                                <div class="tab-content" id="v-pills-tabContent">
+
+                                    <div class="row  full_tab justify-content-center tab-pane fade show active"
+                                         id="menu_order" role="tabpanel"
+                                         aria-labelledby="v-pills-home-tab">
+
+                                        <div id="insert"
+                                             class="col-12 px-0 row order_container d-flex justify-content-center">
+
+                                            {% if orders.count == 0 %}
+                                                {% include 'not_find.html' %}
+                                            {% else %}
+                                                {% for order in orders %}
+                                                    {% include 'object.html' %}
+                                                {% endfor %}
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row full_tab  justify-content-center tab-pane fade"
+                                         id="menu_favorite_products" role="tabpanel"
+                                         aria-labelledby="v-pills-messages-tab">
+
+                                        {% if request.user.profile.favorite_products.count == 0 %}
+                                            {% include 'not_find.html' %}
+                                        {% else %}
+                                            {% include 'shop_products.html' with products=request.user.profile.favorite_products.all %}
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="row full_tab  justify-content-center tab-pane fade"
+                                         id="menu_likely_products" role="tabpanel"
+                                         aria-labelledby="v-pills-messages-tab">
+
+                                        {% if request.user.profile.likely_products.count == 0 %}
+                                            {% include 'not_find.html' %}
+                                        {% else %}
+                                            {% include 'shop_products.html' with products=request.user.profile.likely_products.all %}
+                                        {% endif %}
+
+
+                                    </div>
+
+                                    <div class=" justify-content-center tab-pane fade" id="menu_other"
+                                         role="tabpanel"
+                                         aria-labelledby="v-pills-settings-tab">
+                                        <div class="row">
+                                            <div class="container">
+
+                                                <nav>
+                                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+
+                                                        <a class="nav-item nav-link active" id="menu_other_user-tab"
+                                                           data-toggle="tab"
+                                                           href="#menu_other_user" role="tab"
+                                                           aria-controls="nav-home"
+                                                           aria-selected="true">Общее</a>
+
+                                                        <a class="nav-item nav-link" id="menu_other_profile-tab"
+                                                           data-toggle="tab"
+                                                           href="#menu_other_profile" role="tab"
+                                                           aria-controls="nav-profile"
+                                                           aria-selected="false">Адрес доставки</a>
+                                                    </div>
+                                                </nav>
+                                                <div class="tab-content" id="nav-tabContent">
+
+                                                    <div class="tab-pane fade show active" id="menu_other_user"
+                                                         role="tabpanel"
+                                                         aria-labelledby="nav-home-tab">
+
+                                                        {% include 'user_change.html' %}
+
+                                                        {% if request.user.profile.social == 0 %}
+                                                            <button type="button" class="mt-2 btn__custom__inverse"
+                                                                    data-toggle="modal"
+                                                                    data-target="#modal_password_change">
+                                                                Сменить пароль
+                                                            </button>
+                                                        {% endif %}
+
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="menu_other_profile"
+                                                         role="tabpanel"
+                                                         aria-labelledby="nav-profile-tab">
+                                                        {% include 'address_change.html' %}
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal_order_desc" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;min-width: 70%">
+            <div class="modal-content">
+
+                <div class="modal-body order_container">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+

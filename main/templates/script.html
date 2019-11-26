@@ -1,0 +1,1525 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load bootstrap4 %}
+{#{% bootstrap_css %}#}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () {
+                (m[i].a = m[i].a || []).push(arguments)
+            };
+            m[i].l = 1 * new Date();
+            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(54632203, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true
+        });
+    </script>
+    <noscript>
+        <div><img src="https://mc.yandex.ru/watch/54632203" style="position:absolute; left:-9999px;" alt=""/></div>
+    </noscript>
+    <!-- /Yandex.Metrika counter -->
+
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143183155-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-143183155-1');
+    </script>
+
+
+    <meta charset="utf-8"/>
+
+
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+
+    <title>{% block title %}Bona Fide Sale - Одежда для фитнеса{% endblock title %}</title>
+
+    <link rel="icon" href="{% static 'favicon.png' %}" type="image/png"/>
+    <link rel="stylesheet" href="{% static "css/bootstrap/scss/bootstrap.css" %}"/>
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static "css/ion.rangeSlider.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/style.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/main_style.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/product_style.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/cart_style.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/porifle_style.css" %}"/>
+    <link href="{% static "css/ionicons.css" %}" rel="stylesheet"/>
+    <link href="{% static "mcustomscrollaber/jquery.mCustomScrollbar.min.css" %}" rel="stylesheet"/>
+    <link href="{% static "js/source/jquery.fancybox.css" %}" rel="stylesheet"/>
+    <link href="{% static "lazyload/jquery.lazyloadxt.spinner.min.css" %}" rel="stylesheet"/>
+
+    {% block style %} {% endblock style %}
+
+    {#    <link href="{% static "css/all.css" %}" rel="stylesheet"/>#}
+    {#    <link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">#}
+
+    <link rel="stylesheet" href="{% static "js/barating/themes/css-stars.css" %}"/>
+
+    <script src="{% static "js/jquery-3.3.1.min.js" %}"></script>
+    <script src="{% static "css/bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/popper.min.js" %}"></script>
+    <script src="{% static "lazyload/jquery.lazyloadxt.extra.js" %}"></script>
+    <script src="{% static "js/ion.rangeSlider.min.js" %}"></script>
+
+    <script src="{% static "js/ion.rangeSlider.min.js" %}"></script>
+    <script src="{% static "js/bootstrap-input-spinner.js" %}"></script>
+    <script src="{% static "css/script.js" %}"></script>
+    <script src="{% static "css/jquery.nicescroll.min.js" %}"></script>
+
+    <script src="{% static "mcustomscrollaber/jquery.mCustomScrollbar.concat.min.js" %}"></script>
+    <script src="{% static "js/jquery.easing.min.js" %}"></script>
+    <script src="{% static "js/source/jquery.fancybox.js" %}"></script>
+    <script src="{% static "js/jquery.isotope.js" %}"></script>
+    <script src="{% static "js/appear.min.js" %}"></script>
+    <script src="{% static "js/barating/jquery.barrating.min.js" %}"></script>
+    <script src="{% static "js/all.js" %}"></script>
+    <script src="{% static "css/jquery.color-2.1.2.min.js" %}"></script>
+
+
+</head>
+
+
+<body class="d-flex flex-column h-100" data-spy="scroll" data-target="#menu-section">
+
+
+<div id="PRELOADER">
+    <div class="window_center">
+        <div class="col-4">
+            <img id="preloader_img" class="" src="{% static '500px.svg' %}">
+        </div>
+    </div>
+</div>
+
+
+<div id="BODY" style="display:none;">
+
+
+    {% block scr %}
+
+    {% endblock scr %}
+
+    <script>
+
+
+        function getCookie(name) {
+            var cookieValue = null;
+            $(window).resize();
+            $(window).lazyLoadXT();
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        $(function () {
+            $.ajaxSetup({
+                headers: {"X-CSRFToken": getCookie("csrftoken")}
+            });
+        });
+
+        var target = null;
+
+        $(function () {
+            $(':input').focus(function () {
+                target = $(this).val();
+            });
+        });
+
+        $(function () {
+            jQuery('img.custom_svg').each(function () {
+                var $img = jQuery(this);
+                var imgID = $img.attr('id');
+                var imgClass = $img.attr('class');
+                var imgURL = $img.attr('src');
+
+                jQuery.get(imgURL, function (data) {
+                    // Get the SVG tag, ignore the rest
+                    var $svg = jQuery(data).find('svg');
+
+                    // Add replaced image's ID to the new SVG
+                    if (typeof imgID !== 'undefined') {
+                        $svg = $svg.attr('id', imgID);
+                    }
+                    // Add replaced image's classes to the new SVG
+                    if (typeof imgClass !== 'undefined') {
+                        $svg = $svg.attr('class', imgClass + ' replaced-svg');
+                    }
+
+                    // Remove any invalid XML tags as per http://validator.w3.org
+                    $svg = $svg.removeAttr('xmlns:a');
+
+                    // Check if the viewport is set, else we gonna set it if we can.
+                    if (!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width')) {
+                        $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'))
+                    }
+
+                    // Replace image with new SVG
+                    $img.replaceWith($svg);
+
+                }, 'xml');
+
+            });
+        });
+
+        function favorite_product(product_id, is_add) {
+
+            button = $(".star_color[favorite_product_btn_id=" + product_id + "]");
+
+            if (is_add == true) {
+                button.attr('is_add', 'true');
+                button.addClass('active');
+                return false;
+
+            } else {
+                button.attr('is_add', 'false');
+                button.removeClass('active');
+                return false;
+            }
+            return false;
+        };
+
+        function likely_product(product_id, is_add, count) {
+            count = count.toString();
+            button = $(".like_color[likely_product_btn_id=" + product_id + "]");
+
+            if (is_add == true) {
+                button.attr('is_add', 'true');
+                button.addClass('active');
+                return false;
+
+            } else {
+                button.attr('is_add', 'false');
+                button.removeClass('active');
+                return false;
+            }
+            return false;
+        };
+
+        function product_rating_show(id, state) {
+            $("select.product_rating[product=" + id + "]").attr('state', state);
+        };
+
+        function sound_alarm() {
+            var x = document.getElementById("audios");
+            x.play();
+        };
+
+        function message(data) {
+            $('#message_content').append(data);
+            $('#message_list_close').css('display', 'block');
+        };
+
+
+        function message_close() {
+            $('#message_content').empty();
+            $('#message_list_close').css('display', 'none');
+        };
+
+        function get_bollean(data) {
+            if (data == 'true')
+                return true;
+            else
+                return false;
+        };
+
+        function admin_socket() {
+
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var socket_url = ws_scheme + '://' + window.location.host + "/ws/order_socket/";
+
+            console.log(socket_url);
+
+            var socket = new WebSocket(socket_url);
+
+            $(document).on('change', '.select_status', function () {
+
+                select_order_id = $(this).attr("order_id");
+                object = $('#container_' + select_order_id);
+
+                user_id = object.attr("user_id");
+                user_sk = object.attr("user_sk");
+
+                if (user_id == '') {
+                    user_id = user_sk
+                }
+
+                shop_id = object.attr("shop_id");
+                order_id = object.attr("order_id");
+
+                socket.send(JSON.stringify({
+                    "command": "alarm",
+                    "to": user_id,
+                    "from": shop_id,
+                    "order_id": order_id,
+                    "sender": "shop",
+                    "event": "select_status_change",
+                    "select_status_option": this.options[this.selectedIndex].value
+                }));
+
+            });
+
+            socket.onmessage = function (event) {
+                console.log('admin onmessage: ', event);
+
+                var data = JSON.parse(event.data);
+                var mes = data['message'];
+
+                var command = mes['command'];
+
+                if (command == "alarm") {
+                    var item_event = mes['event'];
+
+                    if (item_event == "new_item") {
+                        if (mes['message_act'] == 'true') {
+                            message(mes['message']);
+                        }
+                        $('#admin_insert_order').append(mes['order_model_admin'])
+                    } else if (item_event == "select_status_change") {
+                        $('#container_' + order_id).replaceWith(mes['order_model_admin'])
+                    }
+                }
+
+
+                sound_alarm()
+            };
+
+
+            socket.onclose = function (event) {
+                console.log('admin closed: ', event)
+            };
+
+            socket.onopen = function (event) {
+                console.log('admin onopen: ', event)
+                shopId = $('#about_page').attr("shop_id");
+                socket.send(JSON.stringify({
+                    "command": "join_admin",
+                    "shop_id": shopId,
+                }));
+            };
+        }
+
+        function animate_cart() {
+            var color = $('#cart_icon').css('color');
+            var size = $('#cart_base').css('font-size');
+
+            $('#cart_icon').animate(
+                {
+                    color: "#ef5fc3",
+                }, 200);
+
+            $('#cart_icon').delay(200).animate(
+                {
+                    color: color,
+                }, 200);
+
+
+            $('#cart_base').animate(
+                {
+                    "font-size": "60px",
+                }, 200);
+
+            $('#cart_base').delay(200).animate(
+                {
+                    "font-size": size,
+                }, 200);
+
+        }
+
+        function product_rating() {
+            $('.product_rating').each(function (index, el) {
+                var $El = $(el);
+
+                var val = $El.attr('rating');
+                val = Math.round(val.replace(",", "."));
+
+
+                var state = get_bollean($El.attr('state'));
+
+                $El.barrating({
+                    theme: 'css-stars2',
+                    initialRating: val,
+                    readonly: state,
+
+                    onSelect: function (value, text, event) {
+                        if (typeof (event) !== 'undefined') {
+                            product_id = $(this)[0].$elem[0].getAttribute('product');
+
+                            data = {
+                                value: value,
+                                product_id: product_id
+                            };
+
+                            $.ajax({
+                                type: "GET",
+                                url: '{% url "product_set_rating" %}',
+                                data: data,
+                                success: function (data) {
+                                    var val = data['rating']
+                                    $("h6.product_rating_text[product=" + product_id + "]").attr('rating', val.toFixed(1));
+                                    $("h6.product_rating_text[product=" + product_id + "]").html(val.toFixed(1));
+
+                                    $("select.product_rating[product=" + product_id + "]").barrating('set', Math.round(val));
+                                    $("select.product_rating[product=" + product_id + "]").barrating('readonly', true);
+
+
+                                }
+                            })
+
+                        } else {
+
+                        }
+                    }
+                });
+
+            });
+        }
+
+
+        $(window).on('load', function () {
+            $(window).resize();
+            $(window).lazyLoadXT();
+
+        });
+
+        $(document).ready(function () {
+
+
+            $('.back').delay(2000).fadeIn(500);
+
+            $('.sizes').mCustomScrollbar({
+                theme: "minimal-dark",
+                axis: "x",
+                advanced: {
+                    autoExpandHorizontalScroll: 2
+                },
+                callbacks: {
+                    onCreate: function () {
+                        $(this).find("p").css("width", $(this).width());
+                    },
+                    onBeforeUpdate: function () {
+                        $(this).find("p").css("width", $(this).width());
+                    }
+                }
+            });
+
+
+            $(window).resize();
+            $(window).lazyLoadXT();
+
+            $('#shop_search').on('submit', function (e) {
+
+                e.preventDefault();
+
+                var mlocation = window.location.pathname;
+
+                if (mlocation.search('catalog') == 1)
+                    return false;
+
+                query = $('#shop_search_input').val();
+                window.location.href = '{% url "catalog"  %}?query=' + query + '';
+
+
+            });
+
+            $('#menu_category .nav-link').click(function (e) {
+                e.preventDefault();
+
+                var mlocation = window.location.pathname;
+                if (mlocation.search('catalog') == 1)
+                    return;
+
+                var category_select_url = $(e.target).attr('href');
+                window.location.href = category_select_url;
+
+            });
+
+            $("#PRELOADER").delay(1000).fadeOut(300);
+            $("#BODY").delay(1300).fadeIn(500);
+
+
+            $("#sidebar").mCustomScrollbar({
+                theme: "minimal-dark"
+            });
+
+            $('.sidebar_close, .overlay').on('click', function () {
+                $('#sidebar').removeClass('active');
+                $('.overlay').removeClass('active');
+            });
+
+            $('#sidebarCollapse').on('click', function () {
+
+                if ($('#sidebar').hasClass('active')) {
+
+                    $('#sidebar').removeClass('active');
+                    $('.overlay').removeClass('active');
+                    return;
+                }
+
+                $('#sidebar').addClass('active');
+                $('.overlay').addClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+
+            });
+
+            $(document).on('submit', '#address_form', function (e) {
+                e.preventDefault();
+                data = $(this).serialize();
+                data += "&type_post=address_form";
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "profile" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#address_form').replaceWith(data['address_change_form_response']);
+                            message(data['message']);
+                        } else if (data['result'] == 'error') {
+                            $('#address_form').replaceWith(data['address_change_form_response']);
+                        }
+                    }
+                })
+            });
+
+
+            $(document).on('click', '.notification_btn', function (e) {
+                e.preventDefault();
+                product_id = $(this).attr('product_id');
+                size_id = $(this).attr('size_id');
+                type = $(this).attr('type');
+                if (type == 'notify_product') {
+                    $('#modal_notification').modal('show');
+                    $('.notification_form').attr('product_id', product_id);
+                    $('.notification_form').attr('size_id', size_id);
+                    $('.notification_form').attr('type', type);
+                } else {
+                    $('#modal_notification_size').modal('show');
+                    $('.notification_form_size').attr('product_id', product_id);
+                    $('.notification_form_size').attr('size_id', size_id);
+                    $('.notification_form_size').attr('type', type);
+                }
+            });
+
+            $(document).on('click', '.submit_noty', function (e) {
+                e.preventDefault();
+                noty_kind = $(this).attr('noty_kind');
+                type = $(this).attr('type');
+
+                if (type == 'notify_product') {
+                    $('.notification_form').attr('noty_kind', noty_kind);
+                    $('.notification_form').submit();
+                } else if (type == 'notify_size') {
+                    $('.notification_form_size').attr('noty_kind', noty_kind);
+                    $('.notification_form_size').submit();
+                }
+
+
+            });
+
+
+            $(document).on('submit', '.notification_form, .notification_form_size', function (e) {
+                e.preventDefault();
+
+                product_id = $(this).attr('product_id');
+                size_id = $(this).attr('size_id');
+                type = $(this).attr('type');
+                noty_kind = $(this).attr('noty_kind');
+
+                data = $(this).serialize();
+                data += "&product_id=" + product_id + "&size_id=" + size_id + "&type=" + type + "&noty_kind=" + noty_kind;
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "create_notification" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data.result == 'success') {
+                            if (type == 'notify_product') {
+                                $('.notification_form').replaceWith(data['notification_form_response']);
+                                $('#modal_notification').modal('hide');
+                            } else {
+                                $('.notification_form_size').replaceWith(data['notification_form_response']);
+                                $('#modal_notification_size').modal('hide');
+                            }
+                            message(data['message']);
+                        } else {
+                            if (type == 'notify_product') {
+                                $('.notification_form').replaceWith(data['notification_form_response']);
+                            } else {
+                                $('.notification_form_size').replaceWith(data['notification_form_response']);
+                            }
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', '#back_form', function (e) {
+                e.preventDefault();
+
+                bname = $(this).find('#id_name').val()
+                bemail = $(this).find('#id_email').val()
+                bphone = $(this).find('#id_phone').val()
+                bmessage = $(this).find('#id_message').val()
+
+                data = {
+                    name: bname,
+                    email: bemail,
+                    phone: bphone,
+                    message: bmessage
+                };
+
+                $('#back_form').trigger('reset');
+                $('#modal_back').modal('hide');
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "back" %}',
+                    data: data,
+                    success: function (data) {
+                    }
+                })
+            });
+
+            $(document).on('show.bs.modal', '#modal_notification', function (e) {
+                $('.notification_form').trigger('reset');
+            });
+
+            $(document).on('click', '.add_to_cart', function (e) {
+                e.preventDefault();
+                product_id = $(this).attr('product_id');
+                size_id = $(this).attr('size_id');
+                data = {
+                    product_id: product_id,
+                    size_id: size_id
+                };
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "add_to_cart" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data.result == 'error') {
+                            $('#modal_add_to_cart').modal('show');
+                            $('#modal_add_to_cart_confirm').attr('product_id', product_id);
+                            $('#modal_add_to_cart_confirm').attr('size_id', size_id);
+                        } else {
+                            $("#cart_count").html(data.cart_count);
+                            sound_alarm();
+                            animate_cart();
+                        }
+                    }
+                })
+            });
+
+            $(document).on('click', '.favorite_product_add_remove', function (e) {
+                e.preventDefault();
+                product_id = $(this).attr('favorite_product_btn_id');
+
+                if ($(this).attr('is_add') == 'true') {
+                    method = 'remove';
+                } else {
+                    method = 'add';
+                }
+                data =
+                    {
+                        product_id: product_id,
+                        method: method
+                    };
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "favorite_product_add_remove" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['method'] == 'add') {
+                            favorite_product(data['product_id'], true);
+                        } else if (data['method'] == 'remove') {
+                            favorite_product(data['product_id'], false);
+                        }
+                    }
+                });
+
+                return false;
+            });
+
+            $(document).on('click', '.likely_product_add_remove', function (e) {
+                e.preventDefault();
+                product_id = $(this).attr('likely_product_btn_id');
+
+                if ($(this).attr('is_add') == 'true') {
+                    method = 'remove';
+                } else {
+                    method = 'add';
+                }
+                data =
+                    {
+                        product_id: product_id,
+                        method: method
+                    };
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "likely_product_add_remove" %}',
+                    data: data,
+                    success: function (data) {
+                        if (data['method'] == 'add') {
+                            likely_product(data['product_id'], true, data['like']);
+                        } else if (data['method'] == 'remove') {
+                            likely_product(data['product_id'], false, data['like']);
+                        }
+                    }
+                });
+
+                return false;
+            });
+
+            $(document).on('submit', '#login_form', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "login" %}',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            window.location.href = data['url'];
+                        } else if (data['result'] == 'error') {
+                            $('#login_form').replaceWith(data['response']);
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', '#registration_form', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "registration" %}',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            window.location.href = data['url'];
+                        } else if (data['result'] == 'error') {
+                            $('#registration_form').replaceWith(data['response']);
+                        }
+                    }
+                })
+            });
+
+            $(document).on('submit', '#password_reset_form', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "password_reset_handler" %}',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data['result'] == 'success') {
+                            $('#modal_password_reset').modal('hide');
+                            message(data['message']);
+                        } else if (data['result'] == 'error') {
+                            $('#password_reset_form').replaceWith(data['response'])
+                        }
+                    }
+                });
+            });
+
+            $('#button_reset_password').on('click', function (e) {
+                e.preventDefault();
+                $('#modal_login_registration').modal('hide');
+                $('#modal_password_reset').modal('show');
+            });
+
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 200) {
+                    $('.scrollup').fadeIn(700);
+                } else {
+                    $('.scrollup').fadeOut(700);
+                }
+            });
+
+            $('.scrollup').click(function () {
+                $("html, body").animate({scrollTop: 0}, 700);
+                return false;
+            });
+
+            $('.back').click(function () {
+                $('#modal_back').modal('show');
+            });
+
+
+        })
+
+    </script>
+
+
+    <div class="header {% block header_cart %} {% endblock header_cart %}">
+        {% block header %}
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light {% block navbar_cart %} fixed-top {% endblock navbar_cart %} ">
+                <div class="d-flex flex-column" style="width: 100%;">
+
+                    <div class="container-fluid">
+                        <div class="row d-flex align-items-center">
+                            {% block sidebar_button %}
+                                <button type="button" id="sidebarCollapse" class="btn__custom">
+                                    <i class="fas fa-align-left"></i>
+                                    <span>Меню</span>
+                                </button>
+                            {% endblock sidebar_button %}
+
+                            <a class="navbar-brand" href="{% url 'main' %}">
+                                <img src="{% static '500px.svg' %}" width="60" height="60"
+                                     class="d-inline-block align-content-center"
+                                     alt="">Bona Fide Sale</a>
+
+                            <button class="btn btn-dark  d-lg-none order-2 order-lg-1" type="button"
+                                    data-toggle="collapse"
+                                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                    aria-expanded="false" aria-label="Toggle navigation">
+                                <i class="fas fa-align-justify"></i>
+                            </button>
+
+                            <div class="justify-content-between collapse navbar-collapse order-3 order-lg-2"
+                                 id="navbarSupportedContent">
+
+
+                                <div class="d-flex flex-column align-items-end align-items-lg-center flex-lg-row">
+                                    <a class="custom_b mb-2 mb-lg-0 nav-link pt-2 pb-2" href="{% url 'about' %}">О
+                                        компании <span
+                                                class="sr-only">(current)</span></a>
+
+
+                                    <a class="custom_b mb-2 mb-lg-0 nav-link pt-2 pb-2" href="{% url 'delivery' %}">Доставка
+                                        и
+                                        оплата
+                                        <span
+                                                class="sr-only">(current)</span></a>
+
+                                    <a style="border-radius: 5px; padding: 10px"
+                                       class="blink custom_b mb-2 mb-lg-0 nav-link pt-2 pb-2"
+                                       href="{% url 'catalog' %}sale">Распродажа
+                                        <span
+                                                class="sr-only">(current)</span></a>
+
+
+                                </div>
+
+
+                                <div class="d-flex flex-column align-items-end flex-lg-row align-items-lg-center">
+
+
+                                    {% block header_right %}
+
+                                    {% endblock header_right %}
+
+                                    {% block header_right_base %}
+
+                                        <a class="custom_b nav-link d-flex pt-2 pb-2 justify-content-center"
+                                           href="tel:+7 999 110 12 36">
+
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <span style="font-size: 1em; color: #ff28a3;">
+                                                  <i class="fa-flip-horizontal fas fa-phone"></i>
+                                                </span>
+                                            </div>
+
+                                            <div style="margin-left: 5px"
+                                                 class="d-flex align-items-center justify-content-center">
+                                                +7 999 110 12 36
+                                            </div>
+
+                                        </a>
+
+                                        <a class="custom_b nav-link pt-2 pb-2 d-flex justify-content-center"
+                                           href="mailto:support@bonafidesale.ru">
+
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <span style="font-size: 1em; color: #ff28a3;">
+                                                  <i class="fas fa-at"></i>
+                                                </span>
+                                            </div>
+
+                                            <div style="margin-left: 5px"
+                                                 class="d-flex align-items-center justify-content-center">
+                                                support@bonafidesale.ru
+                                            </div>
+
+                                        </a>
+
+
+                                        {% if not request.user.is_authenticated %}
+
+                                            <a href="#" data-toggle="modal" data-target="#modal_login_registration"
+                                               class=" pt-2 pb-2 nav-link">Войти</a>
+
+                                            <a class=" pt-2 pb-2 nav-link" href="{% url 'profile' %}">Мои заказы</a>
+
+                                        {% else %}
+
+                                            <a class="pt-2 pb-2 nav-link custom_b  dropdown-toggle" href="#"
+                                               id="navbarDropdown"
+                                               role="button"
+                                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                {{ request.user }}
+                                            </a>
+
+                                            <div class="dropdown-menu dropdown-menu-right"
+                                                 aria-labelledby="navbarDropdown">
+                                                <a class="dropdown-item" href="{% url 'profile' %}">Личный
+                                                    кабинет</a>
+
+                                                {% if request.user.is_superuser %}
+                                                    <script>
+                                                        admin_socket();
+                                                    </script>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'shopadmin' %}">Управление</a>
+                                                {% endif %}
+                                                <div class="dropdown-divider"></div>
+
+                                                <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
+                                            </div>
+
+                                        {% endif %}
+
+
+                                    {% endblock header_right_base %}
+
+                                </div>
+
+                            </div>
+
+                            <div class="dropdown mr-3 mr-lg-2 ml-auto order-lg-3">
+                                <a class="nav-link" href='{% url "cart" %}'>
+                                    <span id="cart_base" style="font-size: 35px" class="fa-layers fa-fw">
+                                    <i id="cart_icon" class="fas fa-cart-arrow-down" style="color:#fd0e7f"></i>
+                                    <span class="fa-layers-counter"
+                                          style="position:absolute;top:-10px;right:-18px;background:white;border:6px solid #fd0e7f;font-size:50px">
+                                    <span id='cart_count' style="color:#fd0e7f; font-weight: 500">
+                                    {% if cart_count == 0 %}
+                                        0
+                                    {% else %}
+                                        {{ cart_count }}
+                                    {% endif %}
+                                    </span></span>
+                                    </span>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    {#                                    {% include 'cart_preview.html' %}#}
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{% url "cart" %}">Перейти в
+                                        корзину</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row d-flex align-items-center">
+                            <div id="message_list" class="w-100">
+                                <div id="message_content">
+                                    {% if message_act == 'true' %}
+
+                                        {{ message }}
+
+                                    {% endif %}
+                                </div>
+
+                                {% if message_act == 'true' %}
+
+                                    <button type="button" onclick="message_close()" id="message_list_close"
+                                            class="btn close"
+                                            style="display: block"
+                                            data-dismiss="alert"
+                                            aria-label="Close">
+                                        Закарыть все
+                                    </button>
+                                {% else %}
+                                    <button type="button" onclick="message_close()" id="message_list_close"
+                                            class="btn close"
+                                            style="display: none"
+                                            data-dismiss="alert"
+                                            aria-label="Close">
+                                        Закарыть все
+                                    </button>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </nav>
+
+        {% endblock header %}
+    </div>
+
+    {% block messages %}
+
+
+
+    {% endblock messages %}
+
+
+    {% block content %}
+
+    {% endblock content %}
+
+
+
+    {% block footer %}
+        <div class="footer">
+            <hr>
+
+            <div class="footer__header">
+                <div class="footer__header__head">
+                    Интернет-магазин Bona Fide Sale — одежда для фитнеса
+                </div>
+
+                <div class="footer__header__body">
+                    <p> Спортивные легинсы должны быть удобные и комфортные, это очень важный параметр при выборе у
+                        девушек,
+                        которые следят за своим здоровьем и поддерживают фигуру в идеальной форме. Легинсы для фитнеса
+                        Bona
+                        Fide
+                        – это правильный крой, качественный материал и огромное разнообразие принтов и расцветок на
+                        любой
+                        вкус.
+                    </p>
+
+                    <p>
+                        Женская одежда для фитнеса Bona Fide – это то, что Вы не могли найти в обычных магазинах! Одежда
+                        для
+                        фитнеса Bona Fide имеет оригинальный дизайн, который мы придумываем сами. В нашей одежде Вы
+                        всегда
+                        будете в центре внимания. Все модели и расцветки выходят ограниченным тиражом. Каждый месяц мы
+                        выпускаем
+                        от двух до пяти новинок. Это могут быть новые спортивные легинсы, комбинезон для фитнеса или
+                        новая
+                        расцветка уже полюбившейся всем модели лосин.
+                    </p>
+
+                    <p>
+                        Свою одежду мы шьем на собственном производстве в Санкт-Петербурге, это дает нам возможность
+                        конкурировать по ценам с зарубежными аналогами. Мы уверены, что наше предложение на рынке
+                        женской
+                        одежды
+                        для фитнеса – лучшее! На производстве имеется собственный контроль качества. Поэтому Вы можете
+                        быть
+                        уверены, что приобретаете качественный надежный товар, который прослужит Вам долго.
+                    </p>
+
+                    <div class="row">
+
+                        <iframe class="maps col-12 col-md-6"
+                                src="https://yandex.ru/map-widget/v1/?um=constructor%3A5170b9ce274344c7532671d441069eb92a174c0995033ea4e9f6515439f3a7e3&amp;source=constructor"
+                                width="594" height="493" frameborder="0"></iframe>
+
+                        <div class="contacts d-flex col-12 pl-3 pr-3 col-md-6 flex-column">
+
+                            <div class="">
+                                <div class="footer__header__head pb-0">
+                                    Адрес:
+                                </div>
+                                <div class="pl-5 address">
+                                    г. Пенза, ул. Московская, 26 2 этаж
+                                </div>
+                            </div>
+
+                            <div class="pt-4">
+                                <div class="footer__header__head pb-2">
+                                    Часы работы:
+                                </div>
+                                <div class="d-flex">
+                                    <div class="pl-5 d-flex flex-column">
+                                        <div class="day">
+                                            Пн.
+                                        </div>
+                                        <div class="day">
+                                            Вт.
+                                        </div>
+                                        <div class="day">
+                                            Ср.
+                                        </div>
+                                        <div class="day">
+                                            Чт.
+                                        </div>
+                                        <div class="day">
+                                            Пн.
+                                        </div>
+                                        <div class="day">
+                                            Сб.
+                                        </div>
+                                    </div>
+                                    <div class="time pl-5 d-flex align-items-center">
+                                        10.00 : 20.00
+                                    </div>
+                                </div>
+
+                                <div class="d-flex pt-2">
+                                    <div class="pl-5 d-flex flex-column">
+                                        <div class="day d-flex align-items-center h-100">
+                                            Вс.
+                                        </div>
+                                    </div>
+                                    <div class="time pl-5 d-flex align-items-center">
+                                        10.00 : 19.00
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="pt-4">
+                                <div class="footer__header__head pb-0">
+                                    Мы в социальных сетях:
+                                </div>
+                                <div class="row address pl-0 pl-md-5  d-flex justify-content-around justify-content-md-start">
+
+                                    <a class="custom_b pt-2" href="https://www.instagram.com/bonafit_showroom/">
+                                        <div class="d-flex">
+
+                                            <div class="d-flex justify-content-center align-items-center">
+
+                                                <span class="fa-stack fa-stack_custom">
+                                                  <i class="fas fa-circle fa-stack-2x" style="color:#fd0e7f;"></i>
+                                                  <i class="fab fa-instagram  fa-inverse fa-stack-1x"></i>
+                                                </span>
+
+                                            </div>
+
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                                <div class="icon_label">
+                                                    Инстаграмм
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </a>
+
+                                </div>
+                            </div>
+
+                            <div class="pt-4">
+                                <div class="footer__header__head pb-0">
+                                    Свяжитесь с нами:
+                                </div>
+                                <div class="row address pt-2 pl-3 pl-md-5 align-items-center d-flex justify-content-around justify-content-md-start">
+
+                                    <a class="custom_b pr-3 pt-2" href="tel:+7 999 110 12 36">
+                                        <div class="d-flex">
+
+                                            <div class="d-flex justify-content-center align-items-center">
+                                            <span class="fa-stack fa-stack_custom">
+                                              <i class="fas fa-circle fa-stack-2x" style="color:#fd0e7f;"></i>
+                                              <i class="fas fa-phone fa-stack-1x fa-inverse"></i>
+                                            </span>
+
+                                            </div>
+
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                                <div class="icon_label">
+                                                    +7 999 110 12 36
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </a>
+
+                                    <a class="custom_b pr-3 pt-2" href="mailto:support@bonafidesale.ru">
+                                        <div class="d-flex">
+
+                                            <div class="d-flex justify-content-center align-items-center">
+                                            <span class="fa-stack fa-stack_custom">
+                                              <i class="fas fa-circle fa-stack-2x" style="color:#fd0e7f;"></i>
+                                              <i class="fas fa-at fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                            </div>
+
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                                <div class="icon_label">
+                                                    support@bonafidesale.ru
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="row pt-2 pl-0 pl-md-5  align-items-center address d-flex justify-content-around justify-content-md-start">
+
+                                    <a class="custom_b pr-3 pt-2" href="https://www.instagram.com/bonafit_showroom/">
+                                        <div class="d-flex">
+
+                                            <div class="d-flex justify-content-center align-items-center">
+                                            <span class="fa-stack fa-stack_custom">
+                                              <i class="fas fa-circle fa-stack-2x" style="color:#4680c2;"></i>
+                                              <i class="fab fa-vk fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                            </div>
+
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                                <div class="icon_label">
+                                                    Вконтакте
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </a>
+
+                                    <a class="custom_b pr-3 pt-2" href="https://www.instagram.com/bonafit_showroom/">
+                                        <div class="d-flex">
+
+                                            <div class="d-flex justify-content-center align-items-center">
+                                            <span class="fa-stack fa-stack_custom">
+                                              <i class="fas fa-circle fa-stack-2x" style="color:#7f4da0;"></i>
+                                              <i class="fab fa-viber fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                            </div>
+
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                                <div class="icon_label">
+                                                    Viber
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </a>
+
+                                    <a class="custom_b pr-3 pt-2" href="https://www.instagram.com/bonafit_showroom/">
+                                        <div class="d-flex">
+
+                                            <div class="d-flex justify-content-center align-items-center">
+                                            <span class="fa-stack fa-stack_custom">
+                                              <i class="fas fa-circle fa-stack-2x" style="color:#25d366;"></i>
+                                              <i class="fab fa-whatsapp fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                            </div>
+
+                                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                                <div class="icon_label">
+                                                    WhatsApp
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </a>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="footer__body">
+                <div class="footer__body__head d-flex">
+
+                </div>
+
+
+                <div class="footer__body__down d-flex justify-content-between align-items-center">
+
+                    <div class="footer__body__down__title d-flex align-items-center">
+                        <a class="navbar-brand" href="{% url 'main' %}">
+                            <img src="{% static '500px.svg' %}" class="d-inline-block align-content-center custom_svg"
+                                 alt="">Bona Fide Sale</a>
+                        <div class="">
+                            © 2019 bonafidesale.ru Все права защищены.
+                        </div>
+                    </div>
+
+                    <div class="footer__body__down__police">
+                        <a href="{% url 'police' %}">
+                            Политика конфиденциальности
+                        </a>
+
+                        <a href="{% url 'return' %}">
+                            Условия возврата
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    {% endblock footer %}
+
+</div>
+
+{% block modal %}
+    <div class="modal fade" id="modal_add_to_cart" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавление товара из другого магазина!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <h6>Вы хотите очистить корзину и начать покупки в этом магазине?</h6>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Нет</button>
+                    <button type="button" class="btn__custom" id="modal_add_to_cart_confirm"
+                            data-dismiss="modal">Да
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_notification" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Уведомить о поступлении товара!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'notification.html' %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_notification_size" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Уведомить о поступлении товара!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'notification_size.html' %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_password_reset" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Восстановление пароля</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    {% include 'PasswordReset/password_reset_form.html' %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_back" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Напишите нам</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <br>
+                    <form id="back_form">
+                        {% csrf_token %}
+
+                        <div class="form-group ">
+                            <label for="id_name">Имя
+                            </label>
+                            <input
+                                    type="text" name="name" maxlength="120" placeholder="Имя"
+                                    class="form-control" id="id_name" title="">
+                        </div>
+
+                        <div class="form-group ">
+                            <label for="id_phone">Телефон
+                            </label>
+                            <input
+                                    type="text" name="phone" maxlength="120" placeholder="Телефон"
+                                    class="form-control" id="id_phone" title="">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_email">E-mail
+                            </label>
+                            <input
+                                    type="text" name="email" maxlength="120" placeholder="E-mail"
+                                    class="form-control" id="id_email" title="">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_message">Сообщение
+                            </label>
+                            <textarea
+                                    type="text" name="message" maxlength="1000" placeholder="Сообщение"
+                                    class="form-control" required="" id="id_message" title="">
+                            </textarea>
+                        </div>
+
+                        <button type="submit" class="btn__custom">Отправить</button>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_login_registration" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Вход/Регистрация</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+
+                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab"
+                               href="#panel_login"
+                               role="tab" aria-controls="nav-home" aria-selected="true">Войти</a>
+
+                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab"
+                               href="#panel_registration"
+                               role="tab" aria-controls="nav-profile" aria-selected="false">Регистрация</a>
+
+                        </div>
+                    </nav>
+
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="panel_login" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <br>
+                            {% include 'LoginRegistration/login_form.html' %}
+                        </div>
+
+                        <div class="tab-pane fade" id="panel_registration" role="tabpanel"
+                             aria-labelledby="nav-profile-tab">
+                            <br>
+                            {% include 'LoginRegistration/registration_form.html' %}
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <br>
+                    <div class="form-group">
+                        <h5>Войти через:</h5>
+                        <a href="/login/vk-oauth2" style="text-decoration: none !important;">
+                            <img src="/static/vk.svg" width="30" height="30" title="Войти через ВКонтакте">
+                        </a>
+                        <a href="/login/google-oauth2" style="text-decoration: none !important;">
+                            <img src="/static/google.svg" width="30" height="30" title="Войти через Google">
+                        </a>
+                        <a href="/login/mailru-oauth2" style="text-decoration: none !important;">
+                            <img src="/static/mail.svg" width="30" height="30" title="Войти через Mail.ru">
+                        </a>
+                        <a href="/login/yandex-oauth2" style="text-decoration: none !important;">
+                            <img src="/static/yandex.svg" width="30" height="30" title="Войти через Яндекс">
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <a href="#">
+                        <button id="button_reset_password" type="button" class="btn__custom__inverse">Забыл пароль
+                        </button>
+                    </a>
+                    <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock modal %}
+
+<span class="scrollup fa-stack fa-2x">
+  <i class="fas fa-circle fa-stack-2x"></i>
+  <i class="scrollup__icon fas fa-angle-up fa-stack-1x"></i>
+</span>
+
+<span class="back fa-stack fa-2x">
+  <i class="fas fa-circle fa-stack-2x"></i>
+  <i class="back__icon fas fa-comment fa-stack-1x"></i>
+</span>
+
+
+<audio id="audios">
+    <source src="{% static "notify.wav" %}" type="audio/wav">
+</audio>
+
+
+</body>
+
+</html>

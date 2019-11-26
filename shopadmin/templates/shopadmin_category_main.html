@@ -1,0 +1,43 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+{% load mathfilters %}
+
+<div id="main_category">
+
+    {% recursetree category %}
+
+
+        <div class="d-flex acat_cont align-items-center justify-content-between" style="margin-left: {{ node.level|mul:70 }}px">
+
+            <div class="d-flex acat_name justify-content-start align-items-center">
+                <div class="acat_name_image mr-3">
+                    <img src="{{ node.image.url }}">
+                </div>
+
+                <div>
+                    {{ node.title }}
+                </div>
+            </div>
+
+            <div class="d-flex acat_set align-items-center">
+                <button id="{{ node.id }}" data-toggle="modal" data-target="#modal_category_add"
+                        data-id="{{ node.id }}" class="mr-1 btn__custom__inverse"><i class="fal fa-plus"></i></button>
+
+                <button id="{{ node.id }}" class="mr-1 category_edit btn__custom__inverse"><i class="fal fa-cog"></i></button>
+                <button id="{{ node.id }}" class="category_remove btn__custom__inverse"><i class="fal fa-times"></i></button>
+            </div>
+
+        </div>
+
+
+        {% if not node.is_leaf_node %}
+
+            {{ children }}
+
+        {% endif %}
+
+    {% endrecursetree %}
+
+</div>
+

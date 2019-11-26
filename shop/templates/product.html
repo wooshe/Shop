@@ -1,0 +1,767 @@
+{% extends 'script.html' %}
+
+{% block title %}Bona Fide Sale - {{ product.name }}{% endblock title %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load mptt_tags %}
+{% load mathfilters %}
+{% load bootstrap4 %}
+{% load math_pr %}
+
+{% block scr %}
+    <script>
+
+        $(document).ready(function () {
+            $("#thumbs").mCustomScrollbar({
+                theme: "minimal-dark",
+                axis: "x",
+                advanced: {
+                    autoExpandHorizontalScroll: 2
+                },
+                callbacks: {
+                    onCreate: function () {
+                        $(this).find("p").css("width", $(this).width());
+                    },
+                    onBeforeUpdate: function () {
+                        $(this).find("p").css("width", $(this).width());
+                    }
+                }
+            });
+
+
+            $(document).on('click', '.img_full_img.na', function (e) {
+                e.preventDefault();
+
+                $('#modal_full_img_body').empty();
+                $('#modal_full_img_body').append($('#img_cont').html());
+                $('#img_cont').empty();
+
+                $('#modal_full_img').modal('show');
+
+                $('.img_full_img').removeClass('na');
+
+            });
+
+            $(document).on('hide.bs.modal', '#modal_full_img', function (e) {
+
+
+                $('#img_cont').empty();
+                $('#img_cont').append($('#modal_full_img_body').html());
+                $('.img_full_img').addClass('na');
+
+                $('#modal_full_img_body').empty();
+
+            });
+
+
+            $(".size_guide").mCustomScrollbar({
+                theme: "minimal-dark",
+                axis: "x",
+                advanced: {
+                    autoExpandHorizontalScroll: 2
+                },
+                callbacks: {
+                    onCreate: function () {
+                        $(this).find("p").css("width", $(this).width());
+                    },
+                    onBeforeUpdate: function () {
+                        $(this).find("p").css("width", $(this).width());
+                    }
+                }
+            });
+
+        })
+    </script>
+{% endblock scr %}
+
+
+
+{% block content %}
+
+{% if product.deleted == True  or product.size.count == 0 %}
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex section__header justify-content-center align-items-center"
+                         style="height: 150px;border: 1px solid #fd0e7f;border-radius: 5px;padding: 10px">
+                        {% if product.deleted == True %}
+                            Этот товар был удален
+                        {% elif product.size.count == 0 %}
+                            Ожидается поступление товара
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+
+
+<section>
+    <div class="product__section container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-2 pm-0">
+                {% include 'sidebar.html' with filter_shop_display='none' %}
+            </div>
+
+            <div class="col-lg-10 col-md-12 pm-0 row">
+
+                <div class="col-12 col-md-5 col-lg-5 px-0 pr-sm-4">
+
+                    <div id="content" class="">
+                        <div id="img_cont">
+                            <div id="gallery_img" class="">
+                            <span class="icon__prev" id="lefty">
+                              <i class="fas fa-angle-left"></i>
+                            </span>
+                                <div id="image" class="img_full_img na"></div>
+
+                                <span class="icon__next" id="righty">
+                              <i class="fas fa-angle-right"></i>
+                            </span>
+
+                            </div>
+                        </div>
+                        <div id="thumbs" class="d-flex justify-content-center">
+
+                            {% if  product.product_photo.all.count == 0 %}
+
+                                <div class="thumbs_style"><img src="{{ product.image_default.url }}">
+                                </div>
+
+                            {% else %}
+                                {% for photo in product.product_photo.all %}
+
+                                    <div class="thumbs_style"><img src="{{ photo.image.url }}">
+                                    </div>
+
+                                {% endfor %}
+
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="product__section__content pt-5 pt-md-0 col-12 col-md-7 col-lg-7 d-flex flex-column">
+
+                    <div class="product__section__content__name">
+                        {{ product.name }}
+
+                    </div>
+
+                    <div class="mt-2 d-flex justify-content-between">
+                        <div class=" d-flex align-self-center justify-content-center">
+
+                            {% if request.user.is_authenticated %}
+
+                                <i favorite_product_btn_id="{{ product.id }}"
+                                   class="favorite_product_add_remove fas fa-star fa-2x pr-2  star_color"></i>
+
+                                {% if product in request.user.profile.favorite_products.all %}
+                                    <script> favorite_product('{{ product.id }}', true);</script>
+                                {% else %}
+                                    <script> favorite_product('{{ product.id }}', false);</script>
+                                {% endif %}
+
+                                <i likely_product_btn_id="{{ product.id }}"
+                                   class="likely_product_add_remove fas fa-heart fa-2x pr-2 like_color"></i>
+
+                                {% if product in request.user.profile.likely_products.all %}
+                                    <script> likely_product('{{ product.id }}', true, {{ product.like }});</script>
+                                {% else %}
+                                    <script> likely_product('{{ product.id }}', false, {{ product.like }});</script>
+                                {% endif %}
+
+                            {% endif %}
+
+
+                        </div>
+
+                        <div class="flex-shrink-0">
+                            <div class="d-flex justify-content-end align-items-center">
+                                <div class="">
+                                    <select state="nothink" rating="{{ product.rating }}"
+                                            product="{{ product.id }}"
+                                            class="product_rating">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+
+                                <div class="pt-1">
+                                    <h6 class="product__rating__count"
+                                        product="{{ product.id }}">({{ product.rating_count }})</h6>
+                                </div>
+
+                                <div class="pt-1 pl-1">
+                                    <h6 class="product__rating__text"
+                                        product="{{ product.id }}">  {{ product.rating }} </h6>
+                                </div>
+
+                                <script>
+                                    {% if request.user.is_authenticated %}
+                                        {% if product in request.user.profile.rating_products.all %}
+                                            product_rating_show({{ product.id }}, true);
+                                        {% else %}
+                                            product_rating_show({{ product.id }}, false);
+                                        {% endif %}
+                                    {% else %}
+                                        product_rating_show({{ product.id }}, true);
+                                    {% endif %}
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <hr>
+                    </div>
+
+                    <div class="mt-4 product__footer d-flex flex-column justify-content-start">
+
+                        <div class="d-flex justify-content-start">
+
+                            <div class="mr-auto">
+                                <ul class="nav nav-pills " id="pills-tab" role="tablist">
+                                    {% for size in product.size.all %}
+                                        <li class="nav-item">
+                                            <a class="nav-link {% if forloop.counter == 1 %} active {% endif %}
+{% if size.size == 'Без размера' %} d-none {% endif %}
+"
+                                               data-toggle="pill" href="#tab_size{{ size.id }}"
+                                               role="tab" aria-controls="pills-home"
+                                               aria-selected="true">{{ size.size }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <button class="btn__custom__inverse" data-toggle="modal"
+                                        data-target="#modal_size_guide">
+                            <span>
+                              <i class="far fa-ruler-horizontal"></i>
+                            </span>
+                                    Таблица размеров
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-2 tab-content" id="pills-tabContent">
+                            {% for size in product.size.all %}
+                            <div class="tab-pane fade {% if forloop.counter == 1 %} show active {% endif %}  "
+                                 id="tab_size{{ size.id }}" role="tabpanel"
+                                 aria-labelledby="pills-home-tab">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex justify-content-center align-items-end product__body__price ">
+                                            {{ product.price }}
+                                        </div>
+
+
+                                        <div class="d-flex justify-content-center align-items-end  product__body__price__sale ">
+
+
+                                            {% if product.sale > 0 %}
+
+                                                <div class="old_price">{{ product.base_price }}</div>
+
+                                                <div class="ml-2 procent_off">{{ product.sale }}</div>
+
+                                            {% else %}
+                                                <div class="old_price">{{ product.price|procent_off:10 }}</div>
+
+                                                <div class="ml-2 procent_off">10</div>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+
+
+                                    {% if product.deleted == False %}
+                                    {% if  size.count > 0 %}
+
+                                        <button class="add_to_cart w-50 btn__custom "
+                                                size_id='{{ size.id }}'
+                                                product_id='{{ product.id }}'>
+                                                                                <span>
+                              <i class="far fa-cart-arrow-down"></i>
+                            </span>
+                                            <div class="d-sm-inline d-none">
+                                                Добавить в корзину
+                                            </div>
+                                        </button>
+
+
+                                    {% else %}
+
+                                        <button class="notification_btn  btn__custom__inverse "
+                                                size_id='{{ size.id }}'
+                                                product_id='{{ product.id }}'>Узнать когда появится
+                                        </button>
+
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+
+
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-4 product__section__delivery">
+                        <div class="col d-flex justify-content-center">
+                            <div class="d-flex justify-content-center m-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="33" height="20"
+                                         viewBox="0 0 33 20">
+                                        <path d="M1.068,0H23.127a1.082,1.082,0,0,1,.865.432l8.8,8.564A1.009,1.009,0,0,1,33,9.6v6.279a1.058,1.058,0,0,1-1.068,1.041h-1.72a4.252,4.252,0,0,1-8.173,0h-11.3a4.253,4.253,0,0,1-8.162.042H1.068A1.058,1.058,0,0,1,0,15.924V1.039A1.051,1.051,0,0,1,1.068,0ZM26.13,17.913a2.036,2.036,0,1,0-2.089-2.036A2.062,2.062,0,0,0,26.13,17.913Zm-19.48,0a2.036,2.036,0,1,0-2.089-2.036A2.062,2.062,0,0,0,6.65,17.913ZM2.137,14.878H2.553a4.251,4.251,0,0,1,8.184-.042h11.3a4.252,4.252,0,0,1,8.173,0h0.652v-4.9l-8.28-7.856H2.137v12.8Z"></path>
+                                    </svg>
+                                </div>
+
+                                <div class="ml-2 d-flex flex-column justify-content-between">
+                                    <div>
+                                        Бесплатная доставка
+                                    </div>
+
+                                    <div>
+                                        <a class="custom_a underline" href="{% url 'delivery' %}"> Условия
+                                            доставки </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col d-flex justify-content-center">
+                            <div class="d-flex justify-content-center m-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="33" height="20"
+                                         viewBox="0 0 37 19">
+                                        <path d="M36.262,2.767H21.132l2.556-1.432a0.705,0.705,0,0,0,.27-0.978A0.749,0.749,0,0,0,22.949.095l-4.94,2.768a0.706,0.706,0,0,0,0,1.24l4.94,2.769a0.75,0.75,0,0,0,.368.1,0.741,0.741,0,0,0,.64-0.358,0.7,0.7,0,0,0-.27-0.978L21.132,4.2H35.524V17.567H1.476V4.2H11.8a0.716,0.716,0,1,0,0-1.432H0.738A0.727,0.727,0,0,0,0,3.483v14.8A0.727,0.727,0,0,0,.738,19H36.262A0.727,0.727,0,0,0,37,18.283V3.483A0.727,0.727,0,0,0,36.262,2.767Z"></path>
+                                    </svg>
+                                </div>
+
+                                <div class="ml-2 d-flex flex-column justify-content-between">
+                                    <div>
+                                        Возможен возврат
+                                    </div>
+
+                                    <div>
+                                        <a class="custom_a underline" href="{% url 'return' %}"> Условия
+                                            возврата </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-4 section__header">Характеристики</div>
+
+                    <div class="row product__section__character">
+                        <div class="col d-flex justify-content-start">
+                            <div class="d-flex justify-content-start">
+
+                                <div class="d-flex flex-column justify-content-between">
+                                    <div class="mt-2 opacity-4">
+                                        Цвет:
+                                    </div>
+
+                                    <div class="mt-2 opacity-4">
+                                        Материал:
+                                    </div>
+
+                                    <div class="mt-2 opacity-4">
+                                        Модель:
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col d-flex justify-content-start">
+                            <div class="d-flex justify-content-start ">
+
+                                <div class="d-flex flex-column justify-content-between">
+                                    <div class="mt-2">
+                                        {{ product.color }}
+                                    </div>
+
+                                    <div class="mt-2">
+                                        {{ product.material }}
+                                    </div>
+
+                                    <div class="mt-2">
+                                        {{ product.model }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="product__section__down mt-5">
+
+                    <ul class="nav nav-pills" id="pills-tab2" role="tablist">
+
+                        <li class="nav-item">
+                            <a class="nav-link active"
+                               data-toggle="pill" href="#character"
+                               role="tab" aria-controls="pills-home"
+                               aria-selected="true">Описание</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               data-toggle="pill" href="#delivery{{ size.id }}"
+                               role="tab" aria-controls="pills-home"
+                               aria-selected="true">Оплата и доставка</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               data-toggle="pill" href="#quality{{ size.id }}"
+                               role="tab" aria-controls="pills-home"
+                               aria-selected="true">Качество</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               data-toggle="pill" href="#return{{ size.id }}"
+                               role="tab" aria-controls="pills-home"
+                               aria-selected="true">Возврат</a>
+                        </li>
+
+                    </ul>
+
+
+                    <div class="mt-2 tab-content" id="pills-tabContent2">
+                        <div class="tab-pane fade show active"
+                             id="character" role="tabpanel"
+                             aria-labelledby="pills-home-tab">
+                            <div class="product__section__down__content">
+                                {{ product.description }}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade "
+                             id="delivery" role="tabpanel"
+                             aria-labelledby="pills-home-tab">
+                            <div class="product__section__down__content">
+                                Оплата производится через сервис CloudPayments после оформления заказа. Посылка
+                                отправляется через 1-3 рабочих дня, не считая дня оплаты любым удобным для вас
+                                способом.
+
+                                Итоговая цена зависит от выбранного города и способа доставки. К оплате принимаются
+                                банковские карты.
+                            </div>
+                        </div>
+                        <div class="tab-pane fade "
+                             id="quality" role="tabpanel"
+                             aria-labelledby="pills-home-tab">
+                            <div class="product__section__down__content">
+                                Компания BonaFide — это собственное производство, европейские стандарты качества и
+                                большой ассортимент уникальных изделий.
+
+                                Каждая модель создается на передовом японском оборудовании из лучших итальянских
+                                тканей и крепких английских ниток, пройдя двойной контроль качества.
+                            </div>
+                        </div>
+                        <div class="tab-pane fade "
+                             id="return" role="tabpanel"
+                             aria-labelledby="pills-home-tab">
+                            <div class="product__section__down__content">
+                                Мы заботимся о покупателях и гарантируем быстрый обмен или возврат продукции!
+
+                                Сохраняйте фабричные ярлыки и документы, подтверждающие оплату. Оформление возврата
+                                производится через специальную форму.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            product_rating();
+        </script>
+    </div>
+</section>
+
+{% if equal_products|length > 0 %}
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-lg-12">
+
+                    <div class="section__header start">Похожие товары</div>
+
+                    <div class="row d-flex justify-content-center">
+                        {% include 'shop_products.html' with col5='col-xl-5th' products=equal_products %}
+                    </div>
+
+                    <div class="mt-3 d-flex justify-content-center">
+                        <a href="{% url 'catalog' %}">
+                            <button class="btn__custom"> Перейти в каталог</button>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% if obraz_products|length > 0 %}
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-lg-12">
+
+                    <div class="section__header start">Дополни образ</div>
+
+                    <div class="row d-flex justify-content-center">
+                        {% include 'shop_products.html' with col5='col-xl-5th' products=obraz_products %}
+                    </div>
+
+                    <div class="mt-3 d-flex justify-content-center">
+                        <a href="{% url 'catalog' %}">
+                            <button class="btn__custom"> Перейти в каталог</button>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+
+<div class="modal fade" id="modal_size_guide" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Гид по размерам</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <nav>
+                    <div class="nav nav-pills justify-content-center" id="nav-tab" role="tablist">
+
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab"
+                           href="#panel_sant"
+                           role="tab" aria-controls="nav-home" aria-selected="true">Сантиметры</a>
+
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab"
+                           href="#panel_inch"
+                           role="tab" aria-controls="nav-profile" aria-selected="false">Дюймы</a>
+
+                    </div>
+                </nav>
+
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane size_guide fade show active" id="panel_sant" role="tabpanel"
+                         aria-labelledby="nav-home-tab">
+                        <br>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">EU</th>
+                                <th scope="col">US</th>
+                                <th scope="col">UK</th>
+                                <th scope="col">Рост</th>
+                                <th scope="col">Грудь</th>
+                                <th scope="col">Талия</th>
+                                <th scope="col">Бедра</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">XXS</th>
+                                <td>34</td>
+                                <td>0-2</td>
+                                <td>4</td>
+                                <td>166-174</td>
+                                <td>78-82</td>
+                                <td>58-61</td>
+                                <td>84-88</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">XS</th>
+                                <td>36</td>
+                                <td>2-4</td>
+                                <td>6</td>
+                                <td>166-174</td>
+                                <td>83-86</td>
+                                <td>62-65</td>
+                                <td>89-92</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">S</th>
+                                <td>38</td>
+                                <td>6</td>
+                                <td>8</td>
+                                <td>166-174</td>
+                                <td>87-90</td>
+                                <td>66-69</td>
+                                <td>93-96</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">M</th>
+                                <td>40</td>
+                                <td>8</td>
+                                <td>10</td>
+                                <td>166-174</td>
+                                <td>91-94</td>
+                                <td>70-73</td>
+                                <td>97-100</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">L</th>
+                                <td>42</td>
+                                <td>10</td>
+                                <td>12</td>
+                                <td>166-174</td>
+                                <td>95-99</td>
+                                <td>74-77</td>
+                                <td>100-103</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tab-pane size_guide fade" id="panel_inch" role="tabpanel"
+                         aria-labelledby="nav-profile-tab">
+                        <br>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">EU</th>
+                                <th scope="col">US</th>
+                                <th scope="col">UK</th>
+                                <th scope="col">Рост</th>
+                                <th scope="col">Грудь</th>
+                                <th scope="col">Талия</th>
+                                <th scope="col">Бедра</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">XXS</th>
+                                <td>5</td>
+                                <td>0-2</td>
+                                <td>4</td>
+                                <td>66-68,5</td>
+                                <td>30-32,5</td>
+                                <td>23-24</td>
+                                <td>33-34,5</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">XS</th>
+                                <td>6</td>
+                                <td>2-4</td>
+                                <td>6</td>
+                                <td>66-68,5</td>
+                                <td>32,5-34</td>
+                                <td>24-25,5</td>
+                                <td>34,5-36</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">S</th>
+                                <td>7</td>
+                                <td>6</td>
+                                <td>8</td>
+                                <td>66-68,5</td>
+                                <td>34-35,5</td>
+                                <td>25,5-27</td>
+                                <td>36-38</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">M</th>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>10</td>
+                                <td>66-68,5</td>
+                                <td>35,5-37</td>
+                                <td>27-28,5</td>
+                                <td>38-39,5</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">L</th>
+                                <td>9</td>
+                                <td>10</td>
+                                <td>12</td>
+                                <td>66-68,5</td>
+                                <td>37-39</td>
+                                <td>28,5-30,5</td>
+                                <td>39,5-40,5</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn__custom__inverse" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_full_img" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+            <div id="modal_full_img_body" class="modal-body">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+
+

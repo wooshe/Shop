@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Лосины и легинсы",
+    "parent": null
+  },
+  {
+    "title": "Толстовки и свитшоты",
+    "parent": null
+  },
+  {
+    "title": "Купальники",
+    "parent": null
+  },
+  {
+    "title": "Топы",
+    "parent": null
+  },
+  {
+    "title": "Комбинезоны",
+    "parent": null
+  },
+  {
+    "title": "Футболки и майки",
+    "parent": null
+  },
+  {
+    "title": "Спортивные костюмы",
+    "parent": null
+  },
+  {
+    "title": "Аксессуары",
+    "parent": null
+  },
+  {
+    "title": "Питание",
+    "parent": null
+  },
+  {
+    "title": "Сумки",
+    "parent": null
+  },
+  {
+    "title": "Платья и юбки",
+    "parent": null
+  },
+  {
+    "title": "Шорты",
+    "parent": null
+  },
+  {
+    "title": "Носки",
+    "parent": "Аксессуары"
+  },
+  {
+    "title": "Шейкеры",
+    "parent": "Аксессуары"
+  },
+  {
+    "title": "Протеиновые батончики",
+    "parent": "Питание"
+  }
+]
